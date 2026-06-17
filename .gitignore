@@ -1,0 +1,57 @@
+# -------------------------------------------------------------------------
+# Flutter / Dart - Base Files and Dependencies
+# -------------------------------------------------------------------------
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# -------------------------------------------------------------------------
+# Android - Generated and Local Files
+# -------------------------------------------------------------------------
+android/.gradle/
+android/local.properties
+android/app/SavedMedias/
+android/captures/
+android/.externalNativeBuild/
+android/.cxx/
+android/app/src/main/res/raw/
+*.keystore
+*.jks
+*.p12
+*.pem
+
+# -------------------------------------------------------------------------
+# iOS - CocoaPods and Apple Specifics
+# -------------------------------------------------------------------------
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+.scv/
+
+# -------------------------------------------------------------------------
+# IDE Settings (VS Code / Android Studio)
+# -------------------------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# -------------------------------------------------------------------------
+# Operating System Files
+# -------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------------------------------------------------------
+# SECURITY - Environment Variables & Keys
+# -------------------------------------------------------------------------
+.env
+*.env.*
