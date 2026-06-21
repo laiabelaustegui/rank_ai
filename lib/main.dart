@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/theme/app_theme.dart';
 import 'data/repositories/ranking_repository.dart';
 import 'data/repositories/mock_repository.dart';
 import 'ui/blocs/ranking/ranking_bloc.dart';
@@ -20,8 +21,9 @@ class MyApp extends StatelessWidget {
         create: (context) => RankingBloc(
           rankingRepository: RepositoryProvider.of<RankingRepository>(context),
         ),
-        child: const MaterialApp(
+        child: MaterialApp(
           debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
           home: SearchScreen(),
         ),
       ),

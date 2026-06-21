@@ -12,7 +12,8 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      primaryColor: primaryColor,
+      colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
+
       scaffoldBackgroundColor: backgroundColor,
 
       // Configuración global para los textos
