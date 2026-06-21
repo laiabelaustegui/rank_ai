@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_search_bar.dart'; // Importamos tu nuevo componente
+import '../widgets/custom_search_bar.dart';
 import '../widgets/suggestion_chip.dart';
 import 'ranking_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../blocs/ranking/ranking_event.dart';
+import '../blocs/ranking/ranking_bloc.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -20,12 +23,17 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _navigateToResults() {
-    if (_searchController.text.trim().isEmpty) {
+    final query = _searchController.text.trim();
+
+    if (query.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a ranking topic first!')),
       );
       return;
     }
+
+    context.read<RankingBloc>().add(FetchRankingEvent(query));
+
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const RankingScreen()),

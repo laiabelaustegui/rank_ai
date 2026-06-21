@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'core/theme/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'data/repositories/ranking_repository.dart';
+import 'data/repositories/mock_repository.dart';
+import 'ui/blocs/ranking/ranking_bloc.dart';
 import 'ui/screens/search_screen.dart';
 
 void main() {
@@ -11,11 +14,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Rank AI',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: const SearchScreen(),
+    return RepositoryProvider<RankingRepository>(
+      create: (context) => MockRepository(),
+      child: BlocProvider(
+        create: (context) => RankingBloc(
+          rankingRepository: RepositoryProvider.of<RankingRepository>(context),
+        ),
+        child: const MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: SearchScreen(),
+        ),
+      ),
     );
   }
 }
