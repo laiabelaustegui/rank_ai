@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'core/theme/app_theme.dart';
+import 'ui/screens/search_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,14 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Rank AI',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      home: const Scaffold(body: Center(child: Text('Rank AI test.'))),
+      theme: AppTheme.lightTheme,
+      home: const SearchScreen(),
     );
   }
 }
