@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/custom_search_bar.dart';
 import '../widgets/suggestion_card.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/search_modal.dart'; // Importa el nuevo modal
+import '../blocs/ranking/ranking_event.dart';
+import '../blocs/ranking/ranking_bloc.dart';
+import 'search_modal.dart';
+import 'ranking_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -14,7 +18,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _dummyController = TextEditingController();
 
-  // Función para abrir el modal con una transición limpia y rápida de abajo hacia arriba (o fade)
+  // Abre el modal normal cuando pulsa la barra de búsqueda vacía
   void _openSearchModal() {
     Navigator.push(
       context,
@@ -25,6 +29,21 @@ class _SearchScreenState extends State<SearchScreen> {
           return FadeTransition(opacity: animation, child: child);
         },
       ),
+    );
+  }
+
+  // ⚡ NUEVA FUNCIÓN DIRECTA: Dispara el evento y navega
+  void _executeDirectSearch(String query) {
+    final cleanQuery = query.trim();
+    if (cleanQuery.isEmpty) return;
+
+    // 1. Mandamos la query al BLoC (recuerda que tu BLoC ya guarda el historial solo)
+    context.read<RankingBloc>().add(FetchRankingEvent(cleanQuery));
+
+    // 2. Transición directa a la pantalla de resultados sin pasar por el modal
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RankingScreen()),
     );
   }
 
@@ -64,7 +83,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Barra Falsa: Al pulsarla abre el modal tipo Instagram
+                // Barra Falsa: Sigue abriendo el modal vacío para escribir
                 CustomSearchBar(
                   controller: _dummyController,
                   readOnly: true,
@@ -72,7 +91,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   onSearch: _openSearchModal,
                 ),
 
-                // ELIMINADO EL BOTÓN "GENERATE RANKING" AQUÍ
                 const SizedBox(height: 32),
 
                 // Sugerencias populares
@@ -103,7 +121,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         iconBgColor: const Color(0xFFE6F4F2),
                         title: 'Coffee Shops',
                         subtitle: '24 Top Picks',
-                        onTap: _openSearchModal, // Te lleva al buscador
+                        onTap: () => _executeDirectSearch(
+                          'Coffee Shops',
+                        ), // 🛠️ Cambiado
                       ),
                       const SizedBox(width: 12),
                       SuggestionCard(
@@ -112,7 +132,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         iconBgColor: Colors.indigo.shade50,
                         title: 'Sci-Fi Movies',
                         subtitle: '45 Ranked items',
-                        onTap: _openSearchModal,
+                        onTap: () => _executeDirectSearch(
+                          'Sci-Fi Movies',
+                        ), // 🛠️ Cambiado
                       ),
                       const SizedBox(width: 12),
                       SuggestionCard(
@@ -121,7 +143,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         iconBgColor: Colors.amber.shade50,
                         title: 'Business Books',
                         subtitle: '10 Best Sellers',
-                        onTap: _openSearchModal,
+                        onTap: () => _executeDirectSearch(
+                          'Business Books',
+                        ), // 🛠️ Cambiado
                       ),
                     ],
                   ),
@@ -195,7 +219,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // (Se mantiene intacto tu _buildProcessStep abajo...)
   Widget _buildProcessStep({
     required ThemeData theme,
     required String number,

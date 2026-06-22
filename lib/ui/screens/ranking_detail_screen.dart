@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/models/ranking_item.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/search_modal.dart';
+import 'search_modal.dart';
 
 class RankingDetailScreen extends StatelessWidget {
   final RankingItem item;

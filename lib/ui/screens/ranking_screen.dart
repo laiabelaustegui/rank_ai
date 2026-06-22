@@ -6,7 +6,7 @@ import '../widgets/ranking_card.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/ranking_filters.dart';
 import '../../data/models/ranking_item.dart';
-import '../widgets/search_modal.dart'; // 📦 IMPORTANTE: Importamos el nuevo modal
+import 'search_modal.dart';
 
 class RankingScreen extends StatefulWidget {
   const RankingScreen({super.key});
@@ -37,11 +37,7 @@ class _RankingScreenState extends State<RankingScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'RankAI',
-        onSearchPressed:
-            _openSearchModal, // 🛠️ CAMBIADO: Ahora abre el modal directamente
-      ),
+      appBar: CustomAppBar(title: 'RankAI', onSearchPressed: _openSearchModal),
       body: BlocBuilder<RankingBloc, RankingState>(
         builder: (context, state) {
           if (state is RankingLoading) {
