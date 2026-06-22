@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../core/constants/api_constants.dart';
+import 'dart:developer' as developer;
 
 class OpenAIService {
   // System prompt that instructs the AI on how to generate the ranking and handle errors
@@ -88,7 +89,14 @@ Core Instructions:
     final response = await http.post(url, headers: headers, body: body);
 
     if (response.statusCode == 200) {
-      return utf8.decode(response.bodyBytes);
+      final String decodedBody = utf8.decode(response.bodyBytes);
+      developer.log(
+        '✅ Respuesta cruda de OpenAI recibida exitosamente:',
+        name: 'RankAI.Service',
+      );
+      developer.log(decodedBody, name: 'RankAI.Response');
+
+      return decodedBody;
     }
 
     throw Exception(

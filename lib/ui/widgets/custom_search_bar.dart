@@ -4,12 +4,17 @@ class CustomSearchBar extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onSearch;
   final String hintText;
+  final bool
+  readOnly; // Nuevo: Para controlar si abre el modal o si escribe directo
+  final VoidCallback? onTap; // Nuevo: Evento al pulsar la barra falsa
 
   const CustomSearchBar({
     super.key,
     required this.controller,
     required this.onSearch,
     this.hintText = 'Ex: Top 10 entrepreneurship books...',
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -20,7 +25,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   void initState() {
     super.initState();
-    // Escuchamos los cambios para redibujar la 'X' localmente sin refrescar toda la pantalla externa
     widget.controller.addListener(_onTextChanged);
   }
 
@@ -40,17 +44,25 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 
     return TextField(
       controller: widget.controller,
+      readOnly:
+          widget.readOnly, // Si es true, no saca teclado, solo dispara el onTap
+      onTap: widget.onTap,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.4)),
+        hintStyle: TextStyle(
+          color: theme.colorScheme.onSurface.withOpacity(0.4),
+        ),
         prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
-        suffixIcon: widget.controller.text.isNotEmpty
+        suffixIcon: widget.controller.text.isNotEmpty && !widget.readOnly
             ? IconButton(
-                icon: Icon(Icons.clear, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                icon: Icon(
+                  Icons.clear,
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
                 onPressed: () {
                   widget.controller.clear();
-                  widget.onSearch(); // Opcional: dispara acción al limpiar si se requiere
+                  widget.onSearch();
                 },
               )
             : null,

@@ -1,28 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // IMPORTANTE: Falta este paquete
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/ranking/ranking_bloc.dart';
 import '../blocs/ranking/ranking_state.dart';
 import '../widgets/ranking_card.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/ranking_filters.dart';
+import '../../data/models/ranking_item.dart';
+import '../widgets/search_modal.dart'; // 📦 IMPORTANTE: Importamos el nuevo modal
 
-class RankingScreen extends StatelessWidget {
+class RankingScreen extends StatefulWidget {
   const RankingScreen({super.key});
+
+  @override
+  State<RankingScreen> createState() => _RankingScreenState();
+}
+
+class _RankingScreenState extends State<RankingScreen> {
+  bool _isDescending = true;
+
+  // Creamos la misma función de apertura para que la experiencia sea idéntica
+  void _openSearchModal() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const SearchModalScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AI Ranking Results'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: theme.colorScheme.onSurface,
+      appBar: CustomAppBar(
+        title: 'RankAI',
+        onSearchPressed:
+            _openSearchModal, // 🛠️ CAMBIADO: Ahora abre el modal directamente
       ),
-      // 🔄 ESCUCHAR ESTADOS DEL BLOC MEDIANTE BLOCBUILDER
       body: BlocBuilder<RankingBloc, RankingState>(
         builder: (context, state) {
-          // 1. ESTADO: CARGANDO (Muestra el spinner de progreso)
           if (state is RankingLoading) {
             return Center(
               child: CircularProgressIndicator(
@@ -31,46 +52,45 @@ class RankingScreen extends StatelessWidget {
             );
           }
 
-          // 2. ESTADO: ÉXITO (Dibuja la lista real con las tarjetas modulares)
           if (state is RankingSuccess) {
+            final List<RankingItem> sortedItems = List.from(state.items);
+            if (_isDescending) {
+              sortedItems.sort((a, b) => b.rating.compareTo(a.rating));
+            } else {
+              sortedItems.sort((a, b) => a.rating.compareTo(b.rating));
+            }
+
             return ListView.builder(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
+                horizontal: 24.0,
+                vertical: 16.0,
               ),
-              itemCount: state.items.length,
+              itemCount: sortedItems.length + 1,
               itemBuilder: (context, index) {
-                return RankingCard(item: state.items[index]);
+                if (index == 0) {
+                  return RankingFilterBar(
+                    query: state.query,
+                    isDescending: _isDescending,
+                    onSortChanged: (descending) {
+                      setState(() => _isDescending = descending);
+                    },
+                  );
+                }
+                return RankingCard(item: sortedItems[index - 1]);
               },
             );
           }
 
-          // 3. ESTADO: ERROR (Muestra un mensaje estilizado si algo falla)
           if (state is RankingError) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 60,
-                      color: theme.colorScheme.error,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      state.message,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.titleMedium,
-                    ),
-                  ],
-                ),
+                child: Text(state.message, style: theme.textTheme.titleMedium),
               ),
             );
           }
 
-          // 4. ESTADO INICIAL (Por si acaso cae aquí antes de disparar nada)
           return const Center(child: Text('Please enter a topic to search.'));
         },
       ),

@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider<RankingRepository>(
-      //create: (context) => MockRepository(),
-      create: (context) => OpenAIRepository(openAiService: OpenAIService()),
+      create: (context) => MockRepository(),
+      //create: (context) => OpenAIRepository(openAiService: OpenAIService()),
       child: BlocProvider(
         create: (context) => RankingBloc(
           rankingRepository: RepositoryProvider.of<RankingRepository>(context),
