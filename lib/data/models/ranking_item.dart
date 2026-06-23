@@ -18,6 +18,24 @@ class PositionCriterion {
   }
 }
 
+class GeoCoordinates {
+  final double latitude;
+  final double longitude;
+
+  GeoCoordinates({required this.latitude, required this.longitude});
+
+  factory GeoCoordinates.fromJson(Map<String, dynamic> json) {
+    return GeoCoordinates(
+      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'latitude': latitude, 'longitude': longitude};
+  }
+}
+
 class RankingItem {
   final int position;
   final String title;
@@ -26,9 +44,11 @@ class RankingItem {
   final double rating;
   final List<String> tags;
   final Map<String, String> keyStats;
-  final List<PositionCriterion> rankingCriteria; // 🚀 El nuevo campo mapeado
-  final String? imageUrl;
+  final List<PositionCriterion> rankingCriteria;
   final String? location;
+  final GeoCoordinates? coordinates;
+  final String? websiteUrl; // 🚀 NUEVO
+  final String? phoneNumber; // 🚀 NUEVO
 
   RankingItem({
     required this.position,
@@ -39,8 +59,10 @@ class RankingItem {
     required this.tags,
     required this.keyStats,
     required this.rankingCriteria,
-    this.imageUrl,
     this.location,
+    this.coordinates,
+    this.websiteUrl, // Añadido aquí
+    this.phoneNumber, // Añadido aquí
   });
 
   factory RankingItem.fromJson(Map<String, dynamic> json) {
@@ -50,14 +72,20 @@ class RankingItem {
       subtitle: json['subtitle'] as String? ?? '',
       description: json['description'] as String? ?? '',
       rating: (json['rating'] as num? ?? 0.0).toDouble(),
-      imageUrl: json['imageUrl'] as String?,
       location: json['location'] as String?,
-      // Parseo seguro de listas y mapas de strings
+      // 🚀 Reemplaza estas líneas dentro de RankingItem.fromJson:
+      websiteUrl: (json['website_url'] ?? json['websiteUrl']) as String?,
+      phoneNumber: (json['phone_number'] ?? json['phoneNumber']) as String?,
+
+      coordinates: json['coordinates'] != null
+          ? GeoCoordinates.fromJson(json['coordinates'] as Map<String, dynamic>)
+          : null,
+
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
           [],
       keyStats: Map<String, String>.from(json['keyStats'] ?? {}),
-      // Mapeo de la sub-clase interna
+
       rankingCriteria:
           (json['ranking_criteria'] as List<dynamic>?)
               ?.map(
@@ -68,7 +96,6 @@ class RankingItem {
     );
   }
 
-  // 🛠️ ADAPTACIÓN: Removido 'const' para inicializar correctamente las nuevas colecciones mutables vacías
   factory RankingItem.dummy() {
     return RankingItem(
       position: 0,
@@ -79,8 +106,10 @@ class RankingItem {
       tags: [],
       keyStats: {},
       rankingCriteria: [],
-      imageUrl: null,
       location: null,
+      coordinates: null,
+      websiteUrl: null, // Dummy nulo para Shimmer
+      phoneNumber: null, // Dummy nulo para Shimmer
     );
   }
 
@@ -91,11 +120,13 @@ class RankingItem {
       'subtitle': subtitle,
       'description': description,
       'rating': rating,
-      'imageUrl': imageUrl,
       'location': location,
       'tags': tags,
       'keyStats': keyStats,
       'ranking_criteria': rankingCriteria.map((e) => e.toJson()).toList(),
+      'coordinates': coordinates?.toJson(),
+      'websiteUrl': websiteUrl, // 🚀 Guardado seguro en JSON
+      'phoneNumber': phoneNumber, // 🚀 Guardado seguro en JSON
     };
   }
 }

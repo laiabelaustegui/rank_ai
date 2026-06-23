@@ -122,12 +122,33 @@ class _SearchScreenState extends State<SearchScreen> {
                   physics: const BouncingScrollPhysics(),
                   child: Row(
                     children: [
+                      const SizedBox(width: 12),
                       SuggestionCard(
-                        icon: Icons.local_cafe_outlined,
-                        title: 'Coffee Shops',
-                        subtitle: 'Best spots to work remotely',
+                        icon: Icons.restaurant_outlined,
+                        title: 'BCN Restaurants',
+                        subtitle: 'Best hidden culinary gems',
                         onTap: () => _openSearchModal(
-                          initialQuery: 'Best coffee shops to work remotely',
+                          initialQuery:
+                              'Best hidden gem restaurants in Barcelona',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      SuggestionCard(
+                        icon: Icons.menu_book_outlined,
+                        title: 'Business Books',
+                        subtitle: 'Essential reads for founders',
+                        onTap: () => _openSearchModal(
+                          initialQuery: 'Essential business books for founders',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      SuggestionCard(
+                        icon: Icons.casino_outlined,
+                        title: 'Board Games',
+                        subtitle: 'Best strategy games for groups',
+                        onTap: () => _openSearchModal(
+                          initialQuery:
+                              'Best modern strategy board games for groups',
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -141,11 +162,11 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       const SizedBox(width: 12),
                       SuggestionCard(
-                        icon: Icons.menu_book_outlined,
-                        title: 'Business Books',
-                        subtitle: 'Essential reads for founders',
+                        icon: Icons.local_cafe_outlined,
+                        title: 'Coffee Shops',
+                        subtitle: 'Best spots to work remotely',
                         onTap: () => _openSearchModal(
-                          initialQuery: 'Essential business books for founders',
+                          initialQuery: 'Best coffee shops to work remotely',
                         ),
                       ),
                     ],

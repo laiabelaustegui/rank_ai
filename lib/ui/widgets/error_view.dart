@@ -1,0 +1,123 @@
+import 'package:flutter/material.dart';
+
+class ErrorView extends StatelessWidget {
+  final String rawMessage;
+  final VoidCallback onActionPressed;
+
+  const ErrorView({
+    super.key,
+    required this.rawMessage,
+    required this.onActionPressed,
+  });
+
+  // 🎯 MENSAJES CONTROLADOS Y PROPIOS (UX WRITING)
+  String get _getCustomMessage {
+    // 🚀 CAMBIO CLAVE: Usamos .contains() para ignorar "Exception:" o cualquier envoltorio de Dart
+    if (rawMessage.contains('NOT_RANKABLE_ERROR')) {
+      return 'The topic requested cannot be processed into a structured ranking. Please try a different or more specific subject.';
+    }
+
+    // Convertimos a minúsculas solo para las comparaciones secundarias e imprevistas
+    final message = rawMessage.toLowerCase();
+
+    // 1. Error de Red / Conectividad
+    if (message.contains('socketexception') ||
+        message.contains('network') ||
+        message.contains('timeout') ||
+        message.contains('http')) {
+      return 'We are having trouble connecting to our servers. Please check your internet connection and try again.';
+    }
+
+    // 2. Error de cuota o límite de la API (Rate limit)
+    if (message.contains('quota') ||
+        message.contains('rate limit') ||
+        message.contains('429')) {
+      return 'Our AI is receiving too many requests right now. Please wait a moment before trying again.';
+    }
+
+    // 3. Mensaje genérico por defecto (Friendly Fallback)
+    return 'An unexpected error occurred while analyzing the topic. Please try again.';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Icono de error estilizado
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.errorContainer.withValues(
+                    alpha: 0.4,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.auto_awesome_motion_outlined,
+                  size: 54,
+                  color: theme.colorScheme.error,
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // Título del estado de error
+              Text(
+                'Unable to Rank',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.2,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Subtítulo con tu propio mensaje controlado
+              Text(
+                _getCustomMessage, // 🚀 Aquí se inyecta tu lógica limpia
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.4,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Botón de acción para mitigar el error
+              FilledButton.icon(
+                onPressed: onActionPressed,
+                style: FilledButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 12.0,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14.0),
+                  ),
+                  elevation: 0,
+                ),
+                icon: const Icon(Icons.search, size: 18),
+                label: const Text(
+                  'Try Another Topic',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

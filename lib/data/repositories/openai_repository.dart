@@ -32,15 +32,14 @@ class OpenAIRepository implements RankingRepository {
 
       final bool isRankable = jsonResponse['isRankable'] ?? false;
 
+      // 🚀 CAMBIO AQUÍ: Si no es rankeable, lanzamos directamente nuestro token controlado
       if (!isRankable) {
-        final String errorMsg =
-            jsonResponse['errorMessage'] ??
-            'It seems that the request cannot be ranked. Please try a different query.';
         developer.log(
-          '⚠️ La solicitud no es válida para rankear. Motivo: $errorMsg',
+          '⚠️ La solicitud no es válida para rankear (isRankable = false). Lanzando excepción controlada.',
           name: 'RankAI.Repository',
         );
-        throw Exception(errorMsg);
+        // Lanzamos el identificador exacto que interceptará la ErrorView
+        throw const FormatException('NOT_RANKABLE_ERROR');
       }
 
       final List<dynamic> itemsJson = jsonResponse['ranking_list'] ?? [];
@@ -60,13 +59,19 @@ class OpenAIRepository implements RankingRepository {
       );
       return items;
     } catch (e, stackTrace) {
-      // 🛠️ LOG: Si revienta por culpa de un campo mal mapeado en tu modelo, lo capturas aquí
       developer.log(
-        '❌ Error crítico procesando el ranking en el repositorio',
+        '❌ Error procesando el ranking en el repositorio',
         name: 'RankAI.Repository',
         error: e,
         stackTrace: stackTrace,
       );
+
+      // Si la excepción es nuestra FormatException controlada, la dejamos pasar limpia
+      if (e is FormatException && e.message == 'NOT_RANKABLE_ERROR') {
+        throw Exception('NOT_RANKABLE_ERROR');
+      }
+
+      // Para cualquier otro error inesperado (fallos de red, nulos en el parseo, etc.)
       throw Exception(e.toString().replaceAll('Exception: ', ''));
     }
   }

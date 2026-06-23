@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shimmer/shimmer.dart'; // 🛠️ NUEVO IMPORT
+import 'package:shimmer/shimmer.dart';
 import '../blocs/ranking/ranking_bloc.dart';
 import '../blocs/ranking/ranking_state.dart';
 import '../widgets/ranking_card.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/ranking_filters.dart';
+import '../widgets/error_view.dart'; // 🚀 Importación de tu nuevo widget extraído
 import '../../data/models/ranking_item.dart';
 import 'search_modal.dart';
 
@@ -17,8 +17,6 @@ class RankingScreen extends StatefulWidget {
 }
 
 class _RankingScreenState extends State<RankingScreen> {
-  bool _isDescending = true;
-
   void _openSearchModal() {
     Navigator.push(
       context,
@@ -32,6 +30,12 @@ class _RankingScreenState extends State<RankingScreen> {
     );
   }
 
+  void _saveCollection(String query, List<RankingItem> items) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Collection "$query" saved successfully!')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -40,7 +44,6 @@ class _RankingScreenState extends State<RankingScreen> {
       appBar: CustomAppBar(title: 'RankAI', onSearchPressed: _openSearchModal),
       body: BlocBuilder<RankingBloc, RankingState>(
         builder: (context, state) {
-          // 🛠️ ADAPTADO: Bloque Shimmer en estado de carga (Loading)
           if (state is RankingLoading) {
             final isDark = theme.brightness == Brightness.dark;
             final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
@@ -52,31 +55,31 @@ class _RankingScreenState extends State<RankingScreen> {
               baseColor: baseColor,
               highlightColor: highlightColor,
               child: ListView.builder(
-                physics:
-                    const NeverScrollableScrollPhysics(), // Desactiva scroll mientras carga
+                physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24.0,
                   vertical: 16.0,
                 ),
-                itemCount:
-                    5, // Renderiza el filtro superior + 4 tarjetas falsas
+                itemCount: 5,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    // Esqueleto para simular la barra superior 'RankingFilterBar'
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Container(
-                        height: 48,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12.0),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(height: 24, width: 180, color: Colors.white),
+                        const SizedBox(height: 12),
+                        Container(
+                          height: 40,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 16),
+                      ],
                     );
                   }
-
-                  // Renderiza las tarjetas usando tu nuevo modo esqueleto
                   return RankingCard(
                     item: RankingItem.dummy(),
                     isSkeleton: true,
@@ -87,16 +90,8 @@ class _RankingScreenState extends State<RankingScreen> {
           }
 
           if (state is RankingSuccess) {
-            final List<RankingItem> sortedItems = List.from(state.items);
-
-            // 🛠️ CORREGIDO: Ordenar por 'position' en lugar de 'rating'
-            if (_isDescending) {
-              // Si es descendente, queremos la posición #1 arriba, luego #2, #3...
-              sortedItems.sort((a, b) => a.position.compareTo(b.position));
-            } else {
-              // Si el usuario invierte el filtro, queremos las posiciones más altas arriba (#10, #9, #8...)
-              sortedItems.sort((a, b) => b.position.compareTo(a.position));
-            }
+            final List<RankingItem> orderedItems = List.from(state.items);
+            orderedItems.sort((a, b) => a.position.compareTo(b.position));
 
             return ListView.builder(
               physics: const BouncingScrollPhysics(),
@@ -104,19 +99,69 @@ class _RankingScreenState extends State<RankingScreen> {
                 horizontal: 24.0,
                 vertical: 16.0,
               ),
-              itemCount: sortedItems.length + 1,
+              itemCount: orderedItems.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return RankingFilterBar(
-                    query: state.query,
-                    isDescending: _isDescending,
-                    onSortChanged: (descending) {
-                      setState(() => _isDescending = descending);
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'AI ANALYSIS FOR:',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.7,
+                            ),
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          state.query,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () =>
+                              _saveCollection(state.query, orderedItems),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.colorScheme.primaryContainer,
+                            foregroundColor:
+                                theme.colorScheme.onPrimaryContainer,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            minimumSize: const Size(0, 40),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            elevation: 0,
+                          ),
+                          icon: const Icon(
+                            Icons.bookmark_add_outlined,
+                            size: 18,
+                          ),
+                          label: const Text(
+                            'Save Collection',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Divider(height: 24, thickness: 0.5),
+                      ],
+                    ),
                   );
                 }
 
-                final item = sortedItems[index - 1];
+                final item = orderedItems[index - 1];
                 final itemKey = '${item.position}_${item.title}';
 
                 return TweenAnimationBuilder<double>(
@@ -141,16 +186,33 @@ class _RankingScreenState extends State<RankingScreen> {
             );
           }
 
+          // 🚀 SECCIÓN OPTIMIZADA: Inyección del nuevo widget desacoplado
           if (state is RankingError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Text(state.message, style: theme.textTheme.titleMedium),
-              ),
+            return ErrorView(
+              rawMessage: state.message,
+              onActionPressed: _openSearchModal,
             );
           }
 
-          return const Center(child: Text('Please enter a topic to search.'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.auto_awesome,
+                  size: 48,
+                  color: theme.colorScheme.primary.withValues(alpha: 0.4),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Please enter a topic to search.',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          );
         },
       ),
     );

@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../data/models/ranking_item.dart';
 import '../widgets/custom_app_bar.dart';
 import 'search_modal.dart';
@@ -21,9 +23,102 @@ class RankingDetailScreen extends StatelessWidget {
     );
   }
 
+  // 🚀 FUNCIÓN MÁGICA MAPAS: Abre Apple Maps en iOS y Google Maps en Android
+  void _openMap(BuildContext context) async {
+    if (item.coordinates == null) return;
+
+    final lat = item.coordinates!.latitude;
+    final lng = item.coordinates!.longitude;
+    final label = Uri.encodeComponent(item.title);
+
+    Uri mapUrl;
+
+    if (Platform.isIOS) {
+      mapUrl = Uri.parse('maps://?ll=$lat,$lng&q=$label');
+    } else {
+      mapUrl = Uri.parse('geo:$lat,$lng?q=$lat,$lng($label)');
+    }
+
+    if (await canLaunchUrl(mapUrl)) {
+      await launchUrl(mapUrl, mode: LaunchMode.externalApplication);
+    } else {
+      final fallbackUrl = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+      );
+      if (await canLaunchUrl(fallbackUrl)) {
+        await launchUrl(fallbackUrl, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not open map applications.')),
+          );
+        }
+      }
+    }
+  }
+
+  // 🌐 FUNCIÓN MÁGICA WEB: Abre el navegador nativo del sistema
+  void _openWebsite(BuildContext context, String urlString) async {
+    final url = Uri.parse(
+      urlString.startsWith('http') ? urlString : 'https://$urlString',
+    );
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not launch website: $urlString')),
+        );
+      }
+    }
+  }
+
+  // 📞 FUNCIÓN MÁGICA TELÉFONO: Abre el marcador telefónico nativo
+  void _makeCall(BuildContext context, String phone) async {
+    final cleanPhone = phone.replaceAll(RegExp(r'\s+'), '');
+    final url = Uri.parse('tel:$cleanPhone');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not dial number: $phone')),
+        );
+      }
+    }
+  }
+
+  // 🛠️ FUNCIÓN AUXILIAR: Separa palabras pegadas (CamelCase) y las pone bonitas
+  String _formatStatKey(String key) {
+    if (key.isEmpty) return '';
+
+    // 1. Añade un espacio antes de cualquier letra mayúscula que esté precedida por una minúscula
+    String result = key.replaceAllMapped(
+      RegExp(r'(?<=[a-z])(?=[A-Z])'),
+      (Match m) => ' ',
+    );
+
+    // 2. Reemplaza guiones bajos o guiones por espacios por si la IA los usó
+    result = result.replaceAll(RegExp(r'[_.-]'), ' ');
+
+    // 3. Convierte a formato "Title Case" (Primera letra de cada palabra en mayúscula)
+    return result
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return '';
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final hasCoordinates = item.coordinates != null;
+    final hasLocation =
+        item.location != null && item.location!.trim().isNotEmpty;
+    final hasWebsite = item.websiteUrl != null && item.websiteUrl!.isNotEmpty;
+    final hasPhone = item.phoneNumber != null && item.phoneNumber!.isNotEmpty;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -125,7 +220,7 @@ class RankingDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // 5. Bloques de Destacados (Posición en Ranking)
+              // 5. Bloques de Destacados (Número de Posición)
               Row(
                 children: [
                   Container(
@@ -138,6 +233,7 @@ class RankingDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           'RANKED ',
@@ -158,41 +254,113 @@ class RankingDetailScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Container(
-                    width: 1,
-                    height: 32,
-                    color: theme.colorScheme.outlineVariant.withOpacity(0.6),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
+                ],
+              ),
+
+              // Fila exclusiva para la ubicación envuelta en condicional estricto
+              if (hasLocation) ...[
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: hasCoordinates ? () => _openMap(context) : null,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          item.location != null ? 'LOCATION' : 'ELITE CHOICE',
-                          style: TextStyle(
-                            color: theme.colorScheme.primary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              'LOCATION',
+                              style: TextStyle(
+                                color: theme.colorScheme.primary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                            if (hasCoordinates) ...[
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.near_me_outlined,
+                                size: 12,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ],
+                          ],
                         ),
+                        const SizedBox(height: 4),
                         Text(
-                          item.location ?? 'Top ranked in 2026',
+                          item.location!,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
+                            decoration: hasCoordinates
+                                ? TextDecoration.underline
+                                : TextDecoration.none,
+                            decorationColor: theme.colorScheme.primary
+                                .withOpacity(0.4),
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
               const SizedBox(height: 24),
+
+              // SECCIÓN BOTONES: Acceso directo para Web y Teléfono
+              if (hasWebsite || hasPhone) ...[
+                Row(
+                  children: [
+                    if (hasWebsite)
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () =>
+                              _openWebsite(context, item.websiteUrl!),
+                          icon: const Icon(Icons.language, size: 18),
+                          label: const Text(
+                            'Visit Website',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (hasWebsite && hasPhone) const SizedBox(width: 12),
+                    if (hasPhone)
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () =>
+                              _makeCall(context, item.phoneNumber!),
+                          icon: const Icon(Icons.phone, size: 18),
+                          label: const Text(
+                            'Call Now',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+              ],
 
               // 6. Sección de Especificaciones Dinámicas (KeyStats)
               if (item.keyStats.isNotEmpty) ...[
@@ -216,7 +384,9 @@ class RankingDetailScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                entry.key,
+                                _formatStatKey(
+                                  entry.key,
+                                ), // 🚀 APLICADA LA FUNCIÓN MÁGICA AQUÍ
                                 style: TextStyle(
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
@@ -231,26 +401,6 @@ class RankingDetailScreen extends StatelessWidget {
                           ),
                         );
                       }).toList(),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
-
-              // 7. 🚀 IMAGEN HERO: Envolvemos el ClipRRect para enlazar la transición con la card
-              if (item.imageUrl != null && item.imageUrl!.isNotEmpty) ...[
-                Hero(
-                  tag:
-                      'avatar_${item.position}_${item.title}', // El mismo tag idéntico de la card
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      item.imageUrl!,
-                      height: 220,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const SizedBox.shrink(),
                     ),
                   ),
                 ),
@@ -334,7 +484,7 @@ class RankingDetailScreen extends StatelessWidget {
               Text(
                 subtitle,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.85),
+                  color: Colors.white.withValues(alpha: 0.85),
                   fontSize: 13,
                   height: 1.3,
                 ),
