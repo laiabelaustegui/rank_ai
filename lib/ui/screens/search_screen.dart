@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../widgets/custom_search_bar.dart';
 import '../widgets/suggestion_card.dart';
 import '../widgets/custom_app_bar.dart';
-import '../blocs/ranking/ranking_event.dart';
-import '../blocs/ranking/ranking_bloc.dart';
+import '../widgets/ranking_search_card.dart';
 import 'search_modal.dart';
-import 'ranking_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -16,41 +12,17 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController _dummyController = TextEditingController();
-
-  // Abre el modal normal cuando pulsa la barra de búsqueda vacía
-  void _openSearchModal() {
+  void _openSearchModal({String? initialQuery}) {
     Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const SearchModalScreen(),
+            SearchModalScreen(initialQuery: initialQuery),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
       ),
     );
-  }
-
-  // ⚡ NUEVA FUNCIÓN DIRECTA: Dispara el evento y navega
-  void _executeDirectSearch(String query) {
-    final cleanQuery = query.trim();
-    if (cleanQuery.isEmpty) return;
-
-    // 1. Mandamos la query al BLoC (recuerda que tu BLoC ya guarda el historial solo)
-    context.read<RankingBloc>().add(FetchRankingEvent(cleanQuery));
-
-    // 2. Transición directa a la pantalla de resultados sin pasar por el modal
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const RankingScreen()),
-    );
-  }
-
-  @override
-  void dispose() {
-    _dummyController.dispose();
-    super.dispose();
   }
 
   @override
@@ -66,50 +38,85 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
 
-                Center(
-                  child: Text(
-                    'Find the absolute best',
-                    textAlign: TextAlign.center,
+                // 1. INSIGNIA / BADGE: AI-POWERED INSIGHTS
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.auto_awesome,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'AI-POWERED INSIGHTS',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 2. TÍTULO PRINCIPAL
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
                     style: theme.textTheme.headlineLarge?.copyWith(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 32,
                       letterSpacing: -0.5,
                     ),
+                    children: [
+                      const TextSpan(text: 'Discover the '),
+                      TextSpan(
+                        text: 'Best of\nEverything.',
+                        style: TextStyle(color: theme.colorScheme.primary),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // Barra Falsa: Sigue abriendo el modal vacío para escribir
-                CustomSearchBar(
-                  controller: _dummyController,
-                  readOnly: true,
-                  onTap: _openSearchModal,
-                  onSearch: _openSearchModal,
+                // 3. SUBTÍTULO DESCRIPTIVO
+                Text(
+                  'Get instantly generated, data-backed rankings for any query. From tech gadgets to hidden travel gems.',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(fontSize: 16),
                 ),
+                const SizedBox(height: 24),
+
+                // 4. TARJETA DE BÚSQUEDA DINÁMICA
+                RankingSearchCard(onTap: _openSearchModal),
 
                 const SizedBox(height: 32),
 
-                // Sugerencias populares
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Trending Topics', style: theme.textTheme.titleMedium),
-                    TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'See all',
-                        style: TextStyle(color: theme.colorScheme.primary),
-                      ),
-                    ),
-                  ],
+                // --- SECCIÓN: SUGGESTED TOPICS ---
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Suggested Topics',
+                    style: theme.textTheme.titleMedium,
+                  ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
 
-                // Scroll Horizontal de Tarjetas Sugeridas
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
@@ -117,42 +124,40 @@ class _SearchScreenState extends State<SearchScreen> {
                     children: [
                       SuggestionCard(
                         icon: Icons.local_cafe_outlined,
-                        iconColor: const Color(0xFF0D9488),
-                        iconBgColor: const Color(0xFFE6F4F2),
                         title: 'Coffee Shops',
-                        subtitle: '24 Top Picks',
-                        onTap: () => _executeDirectSearch(
-                          'Coffee Shops',
-                        ), // 🛠️ Cambiado
+                        subtitle: 'Best spots to work remotely',
+                        onTap: () => _openSearchModal(
+                          initialQuery: 'Best coffee shops to work remotely',
+                        ),
                       ),
                       const SizedBox(width: 12),
                       SuggestionCard(
                         icon: Icons.movie_filter_outlined,
-                        iconColor: Colors.indigo,
-                        iconBgColor: Colors.indigo.shade50,
                         title: 'Sci-Fi Movies',
-                        subtitle: '45 Ranked items',
-                        onTap: () => _executeDirectSearch(
-                          'Sci-Fi Movies',
-                        ), // 🛠️ Cambiado
+                        subtitle: 'Mind-bending masterpieces',
+                        onTap: () => _openSearchModal(
+                          initialQuery: 'Mind-bending sci-fi movies',
+                        ),
                       ),
                       const SizedBox(width: 12),
                       SuggestionCard(
                         icon: Icons.menu_book_outlined,
-                        iconColor: Colors.amber.shade900,
-                        iconBgColor: Colors.amber.shade50,
                         title: 'Business Books',
-                        subtitle: '10 Best Sellers',
-                        onTap: () => _executeDirectSearch(
-                          'Business Books',
-                        ), // 🛠️ Cambiado
+                        subtitle: 'Essential reads for founders',
+                        onTap: () => _openSearchModal(
+                          initialQuery: 'Essential business books for founders',
+                        ),
                       ),
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 36),
-                Divider(height: 1, thickness: 1, color: theme.dividerColor),
+                Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: theme.colorScheme.outlineVariant,
+                ),
                 const SizedBox(height: 36),
 
                 // --- SECCIÓN DE PROCESO ---
@@ -181,13 +186,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const SizedBox(height: 24),
 
+                // 🛠️ MODIFICADO: Ahora pasamos tipos de paso estructurados en vez de colores fijos
                 _buildProcessStep(
                   theme: theme,
                   number: '1',
                   title: 'Search',
                   description:
                       "Tell us what you're looking for with a simple query.",
-                  baseColor: Colors.blue.shade600,
+                  stepType: _StepType.primary,
                 ),
                 const SizedBox(height: 16),
 
@@ -197,7 +203,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   title: 'Analyze',
                   description:
                       'AI engine processes expert data and reviews instantly.',
-                  baseColor: Colors.purple.shade600,
+                  stepType: _StepType.tertiary,
                 ),
                 const SizedBox(height: 16),
 
@@ -207,7 +213,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   title: 'Rank',
                   description:
                       'View the top results in a clear, interactive list.',
-                  baseColor: theme.colorScheme.secondary,
+                  stepType: _StepType.secondary,
                 ),
 
                 const SizedBox(height: 40),
@@ -219,20 +225,28 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  // Helper Widget para mapear semánticamente los colores del tema sin hardcodeo
   Widget _buildProcessStep({
     required ThemeData theme,
     required String number,
     required String title,
     required String description,
-    required Color baseColor,
+    required _StepType stepType,
   }) {
+    // Asigna dinámicamente el color objetivo resolviendo desde el colorScheme actual
+    final Color stepColor = switch (stepType) {
+      _StepType.primary => theme.colorScheme.primary,
+      _StepType.secondary => theme.colorScheme.secondary,
+      _StepType.tertiary => theme.colorScheme.tertiary,
+    };
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.dividerColor),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
@@ -240,15 +254,15 @@ class _SearchScreenState extends State<SearchScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: baseColor.withOpacity(0.08),
+              color: stepColor.withValues(alpha: 0.08),
               shape: BoxShape.circle,
-              border: Border.all(color: baseColor.withOpacity(0.2)),
+              border: Border.all(color: stepColor.withValues(alpha: 0.2)),
             ),
             alignment: Alignment.center,
             child: Text(
               number,
               style: TextStyle(
-                color: baseColor,
+                color: stepColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -270,3 +284,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 }
+
+// 🛠️ ENUM AUXILIAR: Para mapear los pasos del proceso limpiamente
+enum _StepType { primary, secondary, tertiary }

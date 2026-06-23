@@ -4,9 +4,8 @@ class CustomSearchBar extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onSearch;
   final String hintText;
-  final bool
-  readOnly; // Nuevo: Para controlar si abre el modal o si escribe directo
-  final VoidCallback? onTap; // Nuevo: Evento al pulsar la barra falsa
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const CustomSearchBar({
     super.key,
@@ -44,21 +43,24 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 
     return TextField(
       controller: widget.controller,
-      readOnly:
-          widget.readOnly, // Si es true, no saca teclado, solo dispara el onTap
+      readOnly: widget.readOnly,
       onTap: widget.onTap,
       style: theme.textTheme.bodyLarge,
+      minLines: 1,
+      maxLines: 3,
+      keyboardType: TextInputType.multiline,
+
       decoration: InputDecoration(
         hintText: widget.hintText,
         hintStyle: TextStyle(
-          color: theme.colorScheme.onSurface.withOpacity(0.4),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
         ),
         prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
         suffixIcon: widget.controller.text.isNotEmpty && !widget.readOnly
             ? IconButton(
                 icon: Icon(
                   Icons.clear,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 onPressed: () {
                   widget.controller.clear();
@@ -67,7 +69,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               )
             : null,
         filled: true,
-        fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.4),
+        // 🛠️ MODIFICADO: Ahora el fondo usa el color primario de forma ultra suave (vibras de marca discretas)
+        fillColor: theme.colorScheme.primary.withValues(alpha: 0.06),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.0),
           borderSide: BorderSide.none,
@@ -75,6 +78,10 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.0),
           borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 12.0,
+          horizontal: 16.0,
         ),
       ),
       textInputAction: TextInputAction.search,

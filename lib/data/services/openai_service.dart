@@ -4,7 +4,7 @@ import '../../core/constants/api_constants.dart';
 import 'dart:developer' as developer;
 
 class OpenAIService {
-  // System prompt that instructs the AI on how to generate the ranking and handle errors
+  // System prompt actualizado con la semántica de los criterios de posición
   static const String _systemPrompt = '''
 You are an expert AI engine specialized in generating structured rankings based on user requests.
 
@@ -14,10 +14,16 @@ Core Instructions:
 3. Determine the number of items to return:
    - If the user explicitly asks for a specific number of items (e.g., "Top 3", "5 best"), strictly generate exactly that number of items.
    - If the user does not specify a number, generate a high-quality ranking containing UP TO 10 items maximum (choose an optimal number between 3 and 10 based on the topic's relevance).
-4. Criterias & Language: Use a professional tone and objective consensus for the ordering. Write all text fields (titles, descriptions, error messages) in the exact same language as the user query.
+4. Criterias & Language: Use a professional tone and objective consensus for the ordering. Write all text fields (titles, descriptions, subtitles, tags, ranking_criteria, error messages) in the exact same language as the user query.
+5. Fields Semantic:
+   - "subtitle": Author, brand, creator, year, director, or sub-category depending on the query context.
+   - "tags": 2 or 3 short relevant keywords (e.g., ["Bestseller", "Classic"]).
+   - "keyStats": Up to 3 key-value string pairs relevant to the topic (e.g., {"Price": "\$15", "Pages": "320"}).
+   - "ranking_criteria": A list of up to 3 short criteria that justify why this item is in this specific position (e.g., {"name": "Innovation", "reason": "Revolutionized the market in 2023"}).
+   - "imageUrl": Return null unless you have a completely permanent, reliable public URL.
 ''';
 
-  // Json Schema for the expected response from OpenAI
+  // Json Schema actualizado: adiós trend, hola ranking_criteria
   static const Map<String, dynamic> _rankingJsonSchema = {
     'name': 'ranking_response',
     'strict': true,
@@ -35,8 +41,31 @@ Core Instructions:
             'properties': {
               'position': {'type': 'integer'},
               'title': {'type': 'string'},
+              'subtitle': {'type': 'string'},
               'description': {'type': 'string'},
               'rating': {'type': 'number'},
+              'tags': {
+                'type': 'array',
+                'items': {'type': 'string'},
+              },
+              'keyStats': {
+                'type': 'object',
+                'additionalProperties': {'type': 'string'},
+              },
+              'ranking_criteria': {
+                'type': 'array',
+                'items': {
+                  'type': 'object',
+                  'properties': {
+                    'name': {'type': 'string'}, // Ej: "Calidad/Precio"
+                    'reason': {
+                      'type': 'string',
+                    }, // Ej: "Es imbatible en su gama"
+                  },
+                  'required': ['name', 'reason'],
+                  'additionalProperties': false,
+                },
+              },
               'location': {
                 'type': ['string', 'null'],
               },
@@ -47,8 +76,12 @@ Core Instructions:
             'required': [
               'position',
               'title',
+              'subtitle',
               'description',
               'rating',
+              'tags',
+              'keyStats',
+              'ranking_criteria', // 🚀 Requerido para mantener el modo estricto
               'location',
               'imageUrl',
             ],
@@ -83,7 +116,7 @@ Core Instructions:
               'Process this request and generate the ranking if applicable: "$query"',
         },
       ],
-      'temperature': 0.5,
+      'temperature': 0.4,
     });
 
     final response = await http.post(url, headers: headers, body: body);
@@ -91,11 +124,9 @@ Core Instructions:
     if (response.statusCode == 200) {
       final String decodedBody = utf8.decode(response.bodyBytes);
       developer.log(
-        '✅ Respuesta cruda de OpenAI recibida exitosamente:',
+        '✅ Respuesta cruda de OpenAI recibida (Esquema con Criterios):',
         name: 'RankAI.Service',
       );
-      developer.log(decodedBody, name: 'RankAI.Response');
-
       return decodedBody;
     }
 

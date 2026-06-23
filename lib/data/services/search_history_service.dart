@@ -16,8 +16,10 @@ class SearchHistoryService {
     final history = prefs.getStringList(_keyRecentSearches) ?? [];
 
     // Remover si ya existía para evitar duplicados y moverla arriba
-    history.removeWhere((item) => item.toLowerCase() == query.trim().toLowerCase());
-    
+    history.removeWhere(
+      (item) => item.toLowerCase() == query.trim().toLowerCase(),
+    );
+
     // Insertar al inicio de la lista
     history.insert(0, query.trim());
 
@@ -38,5 +40,11 @@ class SearchHistoryService {
     history.remove(query);
     await prefs.setStringList(_keyRecentSearches, history);
     return history;
+  }
+
+  // 🛠️ NUEVO MÉTODO: Borra por completo la clave de búsquedas recientes
+  static Future<void> clearHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyRecentSearches);
   }
 }

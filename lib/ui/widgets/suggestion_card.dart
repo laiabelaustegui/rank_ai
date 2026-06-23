@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 class SuggestionCard extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
-  final Color iconBgColor;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
@@ -11,8 +9,6 @@ class SuggestionCard extends StatelessWidget {
   const SuggestionCard({
     super.key,
     required this.icon,
-    required this.iconColor,
-    required this.iconBgColor,
     required this.title,
     required this.subtitle,
     required this.onTap,
@@ -23,13 +19,13 @@ class SuggestionCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      width: 160, // Ancho fijo estructural para el scroll horizontal
+      width: 160,
+      height: 165,
       decoration: BoxDecoration(
-        // Usa automáticamente Colors.white que definimos en 'surfaceContainer'
         color: theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(16.0),
-        // Usa el color sutil grisáceo personalizado de tu AppTheme
-        border: Border.all(color: theme.dividerColor),
+        // 🛠️ MODIFICADO: Cambiado a outlineVariant para un borde gris fino y sutil
+        border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16.0),
@@ -38,18 +34,18 @@ class SuggestionCard extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Contenedor del Icono
+              // Contenedor del Icono: Ahora adaptado al App Theme 🎨
               Container(
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: iconBgColor,
+                  color: theme.colorScheme.primary.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                child: Icon(icon, color: iconColor, size: 24),
+                child: Icon(icon, color: theme.colorScheme.primary, size: 24),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
               // Título (textPrimary)
               Text(
@@ -70,8 +66,9 @@ class SuggestionCard extends StatelessWidget {
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 13,
+                  height: 1.2,
                 ),
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ],

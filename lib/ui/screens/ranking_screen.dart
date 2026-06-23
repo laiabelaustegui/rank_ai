@@ -18,7 +18,6 @@ class RankingScreen extends StatefulWidget {
 class _RankingScreenState extends State<RankingScreen> {
   bool _isDescending = true;
 
-  // Creamos la misma función de apertura para que la experiencia sea idéntica
   void _openSearchModal() {
     Navigator.push(
       context,
@@ -73,7 +72,30 @@ class _RankingScreenState extends State<RankingScreen> {
                     },
                   );
                 }
-                return RankingCard(item: sortedItems[index - 1]);
+
+                final item = sortedItems[index - 1];
+
+                // 🚀 SOLUCIÓN: Usamos una clave combinada única basada en tu modelo real
+                final itemKey = '${item.position}_${item.title}';
+
+                return TweenAnimationBuilder<double>(
+                  key: ValueKey(itemKey), // Corregido sin usar .id
+                  tween: Tween<double>(begin: 0.0, end: 1.0),
+                  duration: Duration(
+                    milliseconds: 350 + (index * 50).clamp(0, 300),
+                  ),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, 20 * (1 - value)),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: RankingCard(item: item),
+                );
               },
             );
           }
