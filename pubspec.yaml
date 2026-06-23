@@ -35,6 +35,18 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  flutter_bloc: ^9.1.1  # El manejador de estados que estamos configurando
+  equatable: ^2.0.5     # Para comparar estados del Bloc fácilmente sin romper código
+
+  # --- PAQUETES DE RED Y API ---
+  http: ^1.2.0          # Obligatorio para conectarnos a la API de OpenAI mediante peticiones POST
+
+  # --- PAQUETES DE UX / OPTIMIZACIÓN (PUNTOS EXTRA) ---
+  cached_network_image: ^3.3.1  # Controla la caché de imágenes de internet y evita parpadeos (¡Crucial para UX!)
+  shared_preferences: ^2.5.5    # Para el feature extra (guardar el historial de búsquedas localmente)
+  shimmer: ^3.0.0                 # Para el efecto de carga tipo "skeleton" (¡Muy útil para UX!)
+  url_launcher: ^6.3.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
