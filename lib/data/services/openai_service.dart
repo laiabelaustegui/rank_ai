@@ -4,7 +4,6 @@ import '../../core/constants/api_constants.dart';
 import 'dart:developer' as developer;
 
 class OpenAIService {
-  // System prompt actualizado con la semántica de los criterios de posición
   static const String _systemPrompt = '''
 You are an expert AI engine specialized in generating structured rankings based on user requests.
 
@@ -23,7 +22,6 @@ Core Instructions:
    - "imageUrl": Return null unless you have a completely permanent, reliable public URL.
 ''';
 
-  // Json Schema actualizado: adiós trend, hola ranking_criteria
   static const Map<String, dynamic> _rankingJsonSchema = {
     'name': 'ranking_response',
     'strict': true,
@@ -32,7 +30,10 @@ Core Instructions:
       'properties': {
         'isRankable': {'type': 'boolean'},
         'errorMessage': {
-          'type': ['string', 'null'],
+          'anyOf': [
+            {'type': 'string'},
+            {'type': 'null'},
+          ],
         },
         'ranking_list': {
           'type': 'array',
@@ -48,29 +49,36 @@ Core Instructions:
                 'type': 'array',
                 'items': {'type': 'string'},
               },
+              // 🛠️ FIX REQUERIDO PARA KEYSTATS EN MODO STRICT
               'keyStats': {
                 'type': 'object',
+                'properties': {},
                 'additionalProperties': {'type': 'string'},
+                'required': [],
               },
               'ranking_criteria': {
                 'type': 'array',
                 'items': {
                   'type': 'object',
                   'properties': {
-                    'name': {'type': 'string'}, // Ej: "Calidad/Precio"
-                    'reason': {
-                      'type': 'string',
-                    }, // Ej: "Es imbatible en su gama"
+                    'name': {'type': 'string'},
+                    'reason': {'type': 'string'},
                   },
                   'required': ['name', 'reason'],
                   'additionalProperties': false,
                 },
               },
               'location': {
-                'type': ['string', 'null'],
+                'anyOf': [
+                  {'type': 'string'},
+                  {'type': 'null'},
+                ],
               },
               'imageUrl': {
-                'type': ['string', 'null'],
+                'anyOf': [
+                  {'type': 'string'},
+                  {'type': 'null'},
+                ],
               },
             },
             'required': [
@@ -81,7 +89,7 @@ Core Instructions:
               'rating',
               'tags',
               'keyStats',
-              'ranking_criteria', // 🚀 Requerido para mantener el modo estricto
+              'ranking_criteria',
               'location',
               'imageUrl',
             ],

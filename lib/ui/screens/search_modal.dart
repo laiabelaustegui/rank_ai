@@ -82,11 +82,10 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🛠️ MODIFICADO: Header con el buscador expandido y el botón Cancel a la derecha
+            // Header con el buscador expandido y el botón Cancel a la derecha
             Padding(
               padding: const EdgeInsets.only(
-                left:
-                    24.0, // Más espacio en la izquierda ya que no está la flecha
+                left: 24.0, 
                 right: 12.0,
                 top: 8.0,
                 bottom: 8.0,
@@ -98,14 +97,14 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
                       controller: _modalController,
                       hintText: 'Search topics to rank...',
                       onSearch: () => _executeSearch(_modalController.text),
+                      autofocus: true, // 🛠️ NUEVO: Fuerza a que el campo tome el foco y abra el teclado de inmediato
                     ),
                   ),
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     style: TextButton.styleFrom(
-                      foregroundColor:
-                          theme.colorScheme.primary, // Color primario
+                      foregroundColor: theme.colorScheme.primary, 
                       visualDensity: VisualDensity.compact,
                     ),
                     child: const Text(
@@ -187,65 +186,45 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
 
   Widget _buildEmptyState(ThemeData theme) {
     return Center(
-      // Usamos un LayoutBuilder para calcular el espacio disponible real
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: Container(
-              // Forzamos al contenedor interno a ocupar la altura disponible del Expanded
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // 🛠️ COMPENSACIÓN ÓPTICA: Subimos ligeramente el diseño restando peso visual abajo
-                  const Spacer(flex: 4),
-
-                  // Círculo decorativo con icono de IA/Búsqueda
-                  Container(
-                    padding: const EdgeInsets.all(20.0),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.auto_awesome_motion,
-                      size: 40,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Mensaje Principal animador
-                  Text(
-                    'What are we ranking today?',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Texto descriptivo guía
-                  Text(
-                    'Type any topic above to discover, compare, and instantly generate an AI-backed ranking.\n\nTry gadgets, cities, books, or movies!',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.8,
-                      ),
-                      height: 1.4,
-                    ),
-                  ),
-
-                  // El Spacer inferior es más grande (flex: 5) para empujar el contenido hacia arriba sutilmente
-                  const Spacer(flex: 5),
-                ],
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.auto_awesome_motion,
+                size: 40,
+                color: theme.colorScheme.primary,
               ),
             ),
-          );
-        },
+            const SizedBox(height: 24),
+            Text(
+              'What are we ranking today?',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Type any topic above to discover, compare, and instantly generate an AI-backed ranking.\n\nTry gadgets, cities, books, or movies!',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.8,
+                ),
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -68,6 +68,22 @@ class RankingItem {
     );
   }
 
+  // 🛠️ ADAPTACIÓN: Removido 'const' para inicializar correctamente las nuevas colecciones mutables vacías
+  factory RankingItem.dummy() {
+    return RankingItem(
+      position: 0,
+      title: '',
+      subtitle: '',
+      description: '',
+      rating: 0.0,
+      tags: [],
+      keyStats: {},
+      rankingCriteria: [],
+      imageUrl: null,
+      location: null,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'position': position,

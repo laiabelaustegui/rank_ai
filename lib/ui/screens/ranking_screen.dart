@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart'; // 🛠️ NUEVO IMPORT
 import '../blocs/ranking/ranking_bloc.dart';
 import '../blocs/ranking/ranking_state.dart';
 import '../widgets/ranking_card.dart';
@@ -39,20 +40,62 @@ class _RankingScreenState extends State<RankingScreen> {
       appBar: CustomAppBar(title: 'RankAI', onSearchPressed: _openSearchModal),
       body: BlocBuilder<RankingBloc, RankingState>(
         builder: (context, state) {
+          // 🛠️ ADAPTADO: Bloque Shimmer en estado de carga (Loading)
           if (state is RankingLoading) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: theme.colorScheme.primary,
+            final isDark = theme.brightness == Brightness.dark;
+            final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+            final highlightColor = isDark
+                ? Colors.grey[700]!
+                : Colors.grey[100]!;
+
+            return Shimmer.fromColors(
+              baseColor: baseColor,
+              highlightColor: highlightColor,
+              child: ListView.builder(
+                physics:
+                    const NeverScrollableScrollPhysics(), // Desactiva scroll mientras carga
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
+                itemCount:
+                    5, // Renderiza el filtro superior + 4 tarjetas falsas
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    // Esqueleto para simular la barra superior 'RankingFilterBar'
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Container(
+                        height: 48,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Renderiza las tarjetas usando tu nuevo modo esqueleto
+                  return RankingCard(
+                    item: RankingItem.dummy(),
+                    isSkeleton: true,
+                  );
+                },
               ),
             );
           }
 
           if (state is RankingSuccess) {
             final List<RankingItem> sortedItems = List.from(state.items);
+
+            // 🛠️ CORREGIDO: Ordenar por 'position' en lugar de 'rating'
             if (_isDescending) {
-              sortedItems.sort((a, b) => b.rating.compareTo(a.rating));
+              // Si es descendente, queremos la posición #1 arriba, luego #2, #3...
+              sortedItems.sort((a, b) => a.position.compareTo(b.position));
             } else {
-              sortedItems.sort((a, b) => a.rating.compareTo(b.rating));
+              // Si el usuario invierte el filtro, queremos las posiciones más altas arriba (#10, #9, #8...)
+              sortedItems.sort((a, b) => b.position.compareTo(a.position));
             }
 
             return ListView.builder(
@@ -74,12 +117,10 @@ class _RankingScreenState extends State<RankingScreen> {
                 }
 
                 final item = sortedItems[index - 1];
-
-                // 🚀 SOLUCIÓN: Usamos una clave combinada única basada en tu modelo real
                 final itemKey = '${item.position}_${item.title}';
 
                 return TweenAnimationBuilder<double>(
-                  key: ValueKey(itemKey), // Corregido sin usar .id
+                  key: ValueKey(itemKey),
                   tween: Tween<double>(begin: 0.0, end: 1.0),
                   duration: Duration(
                     milliseconds: 350 + (index * 50).clamp(0, 300),

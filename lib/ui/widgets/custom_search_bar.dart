@@ -6,6 +6,7 @@ class CustomSearchBar extends StatefulWidget {
   final String hintText;
   final bool readOnly;
   final VoidCallback? onTap;
+  final bool autofocus; // 🛠️ AÑADIDO
 
   const CustomSearchBar({
     super.key,
@@ -14,6 +15,7 @@ class CustomSearchBar extends StatefulWidget {
     this.hintText = 'Ex: Top 10 entrepreneurship books...',
     this.readOnly = false,
     this.onTap,
+    this.autofocus = false, // 🛠️ Por defecto false para no romper otros lados
   });
 
   @override
@@ -45,6 +47,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
       controller: widget.controller,
       readOnly: widget.readOnly,
       onTap: widget.onTap,
+      autofocus: widget.autofocus, // 🛠️ PASADO AL TEXTFIELD
       style: theme.textTheme.bodyLarge,
       minLines: 1,
       maxLines: 3,
@@ -69,7 +72,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               )
             : null,
         filled: true,
-        // 🛠️ MODIFICADO: Ahora el fondo usa el color primario de forma ultra suave (vibras de marca discretas)
         fillColor: theme.colorScheme.primary.withValues(alpha: 0.06),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.0),
