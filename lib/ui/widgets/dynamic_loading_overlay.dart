@@ -1,4 +1,3 @@
-// lib/presentation/widgets/dynamic_loading_overlay.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
 
@@ -22,7 +21,6 @@ class _DynamicLoadingOverlayState extends State<DynamicLoadingOverlay> {
   @override
   void initState() {
     super.initState();
-    // Rotación de mensajes cada 4 segundos
     _loadingTimer = Timer.periodic(const Duration(milliseconds: 4000), (timer) {
       if (mounted) {
         setState(() {
@@ -44,7 +42,6 @@ class _DynamicLoadingOverlayState extends State<DynamicLoadingOverlay> {
     final theme = Theme.of(context);
 
     return Container(
-      // Capa semitransparente para que el Shimmer de fondo se intuya de forma elegante
       color: theme.scaffoldBackgroundColor.withValues(alpha: 0.6),
       child: Center(
         child: Padding(

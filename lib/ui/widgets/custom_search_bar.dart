@@ -6,7 +6,7 @@ class CustomSearchBar extends StatefulWidget {
   final String hintText;
   final bool readOnly;
   final VoidCallback? onTap;
-  final bool autofocus; // 🛠️ AÑADIDO
+  final bool autofocus;
 
   const CustomSearchBar({
     super.key,
@@ -15,7 +15,7 @@ class CustomSearchBar extends StatefulWidget {
     this.hintText = 'Ex: Top 10 entrepreneurship books...',
     this.readOnly = false,
     this.onTap,
-    this.autofocus = false, // 🛠️ Por defecto false para no romper otros lados
+    this.autofocus = false,
   });
 
   @override
@@ -47,7 +47,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
       controller: widget.controller,
       readOnly: widget.readOnly,
       onTap: widget.onTap,
-      autofocus: widget.autofocus, // 🛠️ PASADO AL TEXTFIELD
+      autofocus: widget.autofocus,
       style: theme.textTheme.bodyLarge,
       minLines: 1,
       maxLines: 3,

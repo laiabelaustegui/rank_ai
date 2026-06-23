@@ -6,7 +6,7 @@ import '../blocs/ranking/ranking_state.dart';
 import '../widgets/ranking_card.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/error_view.dart';
-import '../widgets/dynamic_loading_overlay.dart'; // 🚀 IMPORTANTE: Ajusta esta ruta a tu proyecto
+import '../widgets/dynamic_loading_overlay.dart';
 import '../../data/models/ranking_item.dart';
 import 'search_modal.dart';
 
@@ -48,7 +48,6 @@ class _RankingScreenState extends State<RankingScreen> {
 
             return Stack(
               children: [
-                // Fondo con el Shimmer simulando la carga del esqueleto
                 Shimmer.fromColors(
                   baseColor: baseColor,
                   highlightColor: highlightColor!,
@@ -90,7 +89,6 @@ class _RankingScreenState extends State<RankingScreen> {
                   ),
                 ),
 
-                // 🚀 Capa superior limpia con el nuevo widget asíncrono autocontenido
                 const Positioned.fill(child: DynamicLoadingOverlay()),
               ],
             );

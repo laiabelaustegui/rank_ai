@@ -22,7 +22,6 @@ class OpenAIRepository implements RankingRepository {
       final String assistantMessage = data['choices'][0]['message']['content'];
       final Map<String, dynamic> jsonResponse = jsonDecode(assistantMessage);
 
-      // 🛠️ LOG: Mostrar el JSON interno bien formateado
       final encoder = const JsonEncoder.withIndent('  ');
       final String prettyJson = encoder.convert(jsonResponse);
       developer.log(
@@ -32,19 +31,16 @@ class OpenAIRepository implements RankingRepository {
 
       final bool isRankable = jsonResponse['isRankable'] ?? false;
 
-      // 🚀 CAMBIO AQUÍ: Si no es rankeable, lanzamos directamente nuestro token controlado
       if (!isRankable) {
         developer.log(
           '⚠️ La solicitud no es válida para rankear (isRankable = false). Lanzando excepción controlada.',
           name: 'RankAI.Repository',
         );
-        // Lanzamos el identificador exacto que interceptará la ErrorView
         throw const FormatException('NOT_RANKABLE_ERROR');
       }
 
       final List<dynamic> itemsJson = jsonResponse['ranking_list'] ?? [];
 
-      // 🛠️ LOG: Monitorear el inicio del mapeo a entidades de Dart
       developer.log(
         '🔄 Parseando ${itemsJson.length} elementos a RankingItem...',
         name: 'RankAI.Repository',
@@ -66,12 +62,10 @@ class OpenAIRepository implements RankingRepository {
         stackTrace: stackTrace,
       );
 
-      // Si la excepción es nuestra FormatException controlada, la dejamos pasar limpia
       if (e is FormatException && e.message == 'NOT_RANKABLE_ERROR') {
         throw Exception('NOT_RANKABLE_ERROR');
       }
 
-      // Para cualquier otro error inesperado (fallos de red, nulos en el parseo, etc.)
       throw Exception(e.toString().replaceAll('Exception: ', ''));
     }
   }

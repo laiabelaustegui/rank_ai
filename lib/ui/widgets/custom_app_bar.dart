@@ -12,33 +12,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
 
     return AppBar(
-      // 🛠️ MODIFICADO: Envolvemos el Row en un GestureDetector para capturar el toque
       title: GestureDetector(
         onTap: () {
-          // 🚀 Limpia todo el historial de pantallas y regresa a la raíz principal
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(
-              builder: (context) => const SearchScreen(),
-            ), // 👈 Cambia por tu Home/SearchScreen real
+            MaterialPageRoute(builder: (context) => const SearchScreen()),
             (route) => false,
           );
         },
         child: MouseRegion(
-          cursor: SystemMouseCursors
-              .click, // Hace que en web/desktop muestre la mano de click
+          cursor: SystemMouseCursors.click,
           child: Row(
-            mainAxisSize:
-                MainAxisSize.min, // Evita que el Row se estire innecesariamente
+            mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.bar_chart_rounded, // El icono insignia de tu app 🌟
+                Icons.bar_chart_rounded,
                 color: theme.colorScheme.primary,
                 size: 24,
               ),
-              const SizedBox(
-                width: 8,
-              ), // Pequeña separación entre el logo y el texto
+              const SizedBox(width: 8),
               Text(
                 title,
                 style: theme.textTheme.headlineLarge?.copyWith(

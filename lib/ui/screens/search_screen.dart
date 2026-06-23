@@ -42,7 +42,6 @@ class _SearchScreenState extends State<SearchScreen> {
               children: [
                 const SizedBox(height: 24),
 
-                // 1. INSIGNIA / BADGE: AI-POWERED INSIGHTS
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -75,7 +74,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // 2. TÍTULO PRINCIPAL
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -94,7 +92,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // 3. SUBTÍTULO DESCRIPTIVO
                 Text(
                   'Get instantly generated, data-backed rankings for any query. From tech gadgets to hidden travel gems.',
                   textAlign: TextAlign.center,
@@ -102,12 +99,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // 4. TARJETA DE BÚSQUEDA DINÁMICA
                 RankingSearchCard(onTap: _openSearchModal),
 
                 const SizedBox(height: 32),
 
-                // --- SECCIÓN: SUGGESTED TOPICS ---
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -181,7 +176,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const SizedBox(height: 36),
 
-                // --- SECCIÓN DE PROCESO ---
                 Align(
                   alignment: Alignment.center,
                   child: Column(
@@ -207,7 +201,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // 🛠️ MODIFICADO: Ahora pasamos tipos de paso estructurados en vez de colores fijos
                 _buildProcessStep(
                   theme: theme,
                   number: '1',
@@ -246,7 +239,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // Helper Widget para mapear semánticamente los colores del tema sin hardcodeo
   Widget _buildProcessStep({
     required ThemeData theme,
     required String number,
@@ -254,7 +246,6 @@ class _SearchScreenState extends State<SearchScreen> {
     required String description,
     required _StepType stepType,
   }) {
-    // Asigna dinámicamente el color objetivo resolviendo desde el colorScheme actual
     final Color stepColor = switch (stepType) {
       _StepType.primary => theme.colorScheme.primary,
       _StepType.secondary => theme.colorScheme.secondary,
@@ -306,5 +297,4 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-// 🛠️ ENUM AUXILIAR: Para mapear los pasos del proceso limpiamente
 enum _StepType { primary, secondary, tertiary }

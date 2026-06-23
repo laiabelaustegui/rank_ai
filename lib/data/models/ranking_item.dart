@@ -1,5 +1,3 @@
-// lib/data/models/ranking_item.dart
-
 class PositionCriterion {
   final String name;
   final String reason;
@@ -47,8 +45,8 @@ class RankingItem {
   final List<PositionCriterion> rankingCriteria;
   final String? location;
   final GeoCoordinates? coordinates;
-  final String? websiteUrl; // 🚀 NUEVO
-  final String? phoneNumber; // 🚀 NUEVO
+  final String? websiteUrl;
+  final String? phoneNumber;
 
   RankingItem({
     required this.position,
@@ -61,8 +59,8 @@ class RankingItem {
     required this.rankingCriteria,
     this.location,
     this.coordinates,
-    this.websiteUrl, // Añadido aquí
-    this.phoneNumber, // Añadido aquí
+    this.websiteUrl,
+    this.phoneNumber,
   });
 
   factory RankingItem.fromJson(Map<String, dynamic> json) {
@@ -73,7 +71,6 @@ class RankingItem {
       description: json['description'] as String? ?? '',
       rating: (json['rating'] as num? ?? 0.0).toDouble(),
       location: json['location'] as String?,
-      // 🚀 Reemplaza estas líneas dentro de RankingItem.fromJson:
       websiteUrl: (json['website_url'] ?? json['websiteUrl']) as String?,
       phoneNumber: (json['phone_number'] ?? json['phoneNumber']) as String?,
 
@@ -108,8 +105,8 @@ class RankingItem {
       rankingCriteria: [],
       location: null,
       coordinates: null,
-      websiteUrl: null, // Dummy nulo para Shimmer
-      phoneNumber: null, // Dummy nulo para Shimmer
+      websiteUrl: null,
+      phoneNumber: null,
     );
   }
 
@@ -125,8 +122,8 @@ class RankingItem {
       'keyStats': keyStats,
       'ranking_criteria': rankingCriteria.map((e) => e.toJson()).toList(),
       'coordinates': coordinates?.toJson(),
-      'websiteUrl': websiteUrl, // 🚀 Guardado seguro en JSON
-      'phoneNumber': phoneNumber, // 🚀 Guardado seguro en JSON
+      'websiteUrl': websiteUrl,
+      'phoneNumber': phoneNumber,
     };
   }
 }

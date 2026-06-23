@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Colores de marca personalizados
   static const Color primaryColor = Color(0xFF0C8A77);
   static const Color secondaryColor = Color(0xFF8040AC);
   static const Color tertiaryColor = Color(0xFFF59E0B);
   static const Color backgroundColor = Color(0xFFF8F9FA);
-  static const Color textPrimary = Color(
-    0xFF111827,
-  ); // Slate-900 (más moderno que el negro puro)
-  static const Color textSecondary = Color(
-    0xFF4B5563,
-  ); // Slate-600 para mejor legibilidad
+  static const Color textPrimary = Color(0xFF111827);
+  static const Color textSecondary = Color(0xFF4B5563);
 
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+
+      // ColorScheme for light theme with your custom colors
       colorScheme: const ColorScheme.light(
         primary: primaryColor,
         secondary: secondaryColor,
@@ -34,7 +31,6 @@ class AppTheme {
 
       scaffoldBackgroundColor: backgroundColor,
 
-      // Configuración global para los textos
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
           fontSize: 32,
@@ -60,7 +56,6 @@ class AppTheme {
         ),
       ),
 
-      // Configuración global para los Chips de sugerencias
       chipTheme: ChipThemeData(
         backgroundColor: Colors.white,
         labelStyle: const TextStyle(
@@ -73,12 +68,10 @@ class AppTheme {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
 
-      // Configuración global para los botones reflejando tu color de Stitch
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              secondaryColor, // 👈 Cambiado a tu azul cobalto secundario
-          foregroundColor: Colors.white, // 👈 Fuerza el texto e icono a blanco
+          backgroundColor: secondaryColor,
+          foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(56),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

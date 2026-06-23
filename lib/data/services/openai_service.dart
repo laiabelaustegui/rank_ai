@@ -44,7 +44,6 @@ Core Instructions:
               'subtitle': {'type': 'string'},
               'description': {'type': 'string'},
 
-              // 🛠️ MODIFICACIÓN AQUÍ: Forzamos el rango de 0 a 5 en el JSON Schema
               'rating': {'type': 'number', 'minimum': 0.0, 'maximum': 5.0},
 
               'tags': {

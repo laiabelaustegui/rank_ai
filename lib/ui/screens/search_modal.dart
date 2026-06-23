@@ -83,7 +83,6 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header con el buscador expandido y el botón Cancel a la derecha
             Padding(
               padding: const EdgeInsets.only(
                 left: 24.0,
@@ -99,7 +98,7 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
                       hintText: 'Search topics to rank...',
                       onSearch: () => _executeSearch(_modalController.text),
                       autofocus:
-                          true, // 🛠️ NUEVO: Fuerza a que el campo tome el foco y abra el teclado de inmediato
+                          true, 
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -109,8 +108,8 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const SearchScreen(),
-                        ), // 👈 Reemplaza por el nombre real de tu vista principal
-                        (route) => false, // Elimina todas las rutas previas
+                        ), 
+                        (route) => false, 
                       );
                     },
                     style: TextButton.styleFrom(
@@ -130,7 +129,6 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Sección de título + Botón "Clear" usando el App Theme
             if (_recentSearches.isNotEmpty) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -160,7 +158,6 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
               const SizedBox(height: 8),
             ],
 
-            // Lista o Estado Vacío animador
             Expanded(
               child: _recentSearches.isEmpty
                   ? _buildEmptyState(theme)
@@ -204,14 +201,12 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
             Container(
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                // 🛠️ CAMBIADO: Antes usaba primary, ahora usa el fondo de secondary
                 color: theme.colorScheme.secondary.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.auto_awesome_motion,
                 size: 40,
-                // 🛠️ CAMBIADO: Antes usaba primary, ahora usa secondary
                 color: theme.colorScheme.secondary,
               ),
             ),

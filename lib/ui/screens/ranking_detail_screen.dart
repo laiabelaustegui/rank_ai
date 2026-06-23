@@ -23,7 +23,6 @@ class RankingDetailScreen extends StatelessWidget {
     );
   }
 
-  // 🚀 FUNCIÓN MÁGICA MAPAS: Abre Apple Maps en iOS y Google Maps en Android
   void _openMap(BuildContext context) async {
     if (item.coordinates == null) return;
 
@@ -57,7 +56,6 @@ class RankingDetailScreen extends StatelessWidget {
     }
   }
 
-  // 🌐 FUNCIÓN MÁGICA WEB: Abre el navegador nativo del sistema
   void _openWebsite(BuildContext context, String urlString) async {
     final url = Uri.parse(
       urlString.startsWith('http') ? urlString : 'https://$urlString',
@@ -73,7 +71,6 @@ class RankingDetailScreen extends StatelessWidget {
     }
   }
 
-  // 📞 FUNCIÓN MÁGICA TELÉFONO: Abre el marcador telefónico nativo
   void _makeCall(BuildContext context, String phone) async {
     final cleanPhone = phone.replaceAll(RegExp(r'\s+'), '');
     final url = Uri.parse('tel:$cleanPhone');
@@ -88,20 +85,16 @@ class RankingDetailScreen extends StatelessWidget {
     }
   }
 
-  // 🛠️ FUNCIÓN AUXILIAR: Separa palabras pegadas (CamelCase) y las pone bonitas
   String _formatStatKey(String key) {
     if (key.isEmpty) return '';
 
-    // 1. Añade un espacio antes de cualquier letra mayúscula que esté precedida por una minúscula
     String result = key.replaceAllMapped(
       RegExp(r'(?<=[a-z])(?=[A-Z])'),
       (Match m) => ' ',
     );
 
-    // 2. Reemplaza guiones bajos o guiones por espacios por si la IA los usó
     result = result.replaceAll(RegExp(r'[_.-]'), ' ');
 
-    // 3. Convierte a formato "Title Case" (Primera letra de cada palabra en mayúscula)
     return result
         .split(' ')
         .map((word) {
@@ -133,7 +126,6 @@ class RankingDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Subtítulo (Autor/Marca) & Rating
               Row(
                 children: [
                   if (item.subtitle.isNotEmpty)
@@ -164,7 +156,6 @@ class RankingDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // 2. Título Principal
               Text(
                 item.title,
                 style: theme.textTheme.headlineLarge?.copyWith(
@@ -176,12 +167,10 @@ class RankingDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // 3. Tags / Etiquetas dinámicas (¡Actualizado!)
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
                 children: [
-                  // 🟣 Tag de RANKED (Siempre el primero y en color lila)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -204,7 +193,6 @@ class RankingDetailScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // 🏷️ Resto de los tags dinámicos de la lista
                   ...item.tags.map((tag) {
                     return Container(
                       padding: const EdgeInsets.symmetric(
@@ -233,7 +221,6 @@ class RankingDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // 4. Descripción
               Text(
                 item.description,
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -243,7 +230,6 @@ class RankingDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Fila exclusiva para la ubicación envuelta en condicional estricto
               if (hasLocation) ...[
                 InkWell(
                   onTap: hasCoordinates ? () => _openMap(context) : null,
@@ -304,7 +290,6 @@ class RankingDetailScreen extends StatelessWidget {
                 ),
               ],
 
-              // SECCIÓN BOTONES: Acceso directo para Web y Teléfono
               if (hasWebsite || hasPhone) ...[
                 const SizedBox(height: 16),
                 Row(
@@ -372,7 +357,6 @@ class RankingDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
               ],
-              // 6. Sección de Especificaciones Dinámicas (KeyStats)
               if (item.keyStats.isNotEmpty) ...[
                 Text(
                   'Key Statistics',
@@ -424,7 +408,6 @@ class RankingDetailScreen extends StatelessWidget {
                 const SizedBox(height: 24),
               ],
 
-              // 8. Tarjeta de "Ranking Analysis"
               if (item.rankingCriteria.isNotEmpty)
                 Container(
                   width: double.infinity,

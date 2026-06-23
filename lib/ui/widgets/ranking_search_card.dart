@@ -49,24 +49,21 @@ class _RankingSearchCardState extends State<RankingSearchCard> {
         color: theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          // Sombra base estructural de la tarjeta (Gris / Oscura)
           BoxShadow(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
-          // 🛠️ NUEVO: El sombreado difuminado (Glow) del color primario
           BoxShadow(
             color: theme.colorScheme.secondary.withValues(
               alpha: 0.40,
-            ), // Color primario muy sutil
-            blurRadius: 28, // Difuminado amplio para el efecto aura
-            spreadRadius: 1, // Expansión mínima para que nazca desde el borde
+            ), 
+            blurRadius: 28, 
+            spreadRadius: 1,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          // Unimos el borde usando el mismo color primario con baja opacidad
           color: theme.colorScheme.secondary.withValues(alpha: 0.15),
           width: 1.0,
         ),
@@ -127,7 +124,6 @@ class _RankingSearchCardState extends State<RankingSearchCard> {
                 ),
                 const SizedBox(height: 12),
 
-                // Botón inferior
                 IgnorePointer(
                   child: SizedBox(
                     width: double.infinity,

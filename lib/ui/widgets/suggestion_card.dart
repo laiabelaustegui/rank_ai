@@ -24,7 +24,6 @@ class SuggestionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(16.0),
-        // 🛠️ MODIFICADO: Cambiado a outlineVariant para un borde gris fino y sutil
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: InkWell(
@@ -36,7 +35,6 @@ class SuggestionCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Contenedor del Icono: Ahora adaptado al App Theme 🎨
               Container(
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
@@ -47,7 +45,6 @@ class SuggestionCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // Título (textPrimary)
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -60,7 +57,6 @@ class SuggestionCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
 
-              // Subtítulo (textSecondary)
               Text(
                 subtitle,
                 style: theme.textTheme.bodyMedium?.copyWith(

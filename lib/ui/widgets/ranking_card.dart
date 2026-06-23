@@ -14,11 +14,9 @@ class RankingCard extends StatelessWidget {
     final hasLocation =
         item.location != null && item.location!.trim().isNotEmpty;
 
-    // 🎨 APP THEME: Shimmer adaptativo
     final isDark = theme.brightness == Brightness.dark;
     final skeletonColor = isDark ? Colors.grey[700]! : Colors.grey[200]!;
 
-    // Método centralizado para la navegación de detalles
     void navigateToDetail() {
       Navigator.push(
         context,
@@ -44,38 +42,35 @@ class RankingCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cabecera: Posición Circular + Título
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 isSkeleton
                     ? _buildSkeletonBlock(
-                        width: 36, // Ajustado al mismo tamaño circular
+                        width: 36,
                         height: 36,
                         color: skeletonColor,
-                        isCircle: true, // 🚀 Activamos círculo para el Shimmer
+                        isCircle: true,
                       )
                     : Container(
-                        width: 36, // 🚀 Ancho fijo esférico
-                        height: 36, // 🚀 Alto fijo esférico
+                        width: 36,
+                        height: 36,
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primary,
-                          shape: BoxShape.circle, // 🚀 Hace el badge redondo
+                          shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Text(
-                            '${item.position}', // 🚀 Posición limpia sin '#'
+                            '${item.position}',
                             style: TextStyle(
                               color: theme.colorScheme.onPrimary,
-                              fontSize: 14, // Balanceado para 1 y 2 dígitos
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
-                const SizedBox(
-                  width: 12,
-                ), // 🚀 Espaciado premium junto al círculo
+                const SizedBox(width: 12),
                 Expanded(
                   child: isSkeleton
                       ? _buildSkeletonBlock(height: 17, color: skeletonColor)
@@ -93,7 +88,6 @@ class RankingCard extends StatelessWidget {
             ),
             const SizedBox(height: 6),
 
-            // Subtítulo
             if (isSkeleton || item.subtitle.isNotEmpty) ...[
               isSkeleton
                   ? _buildSkeletonBlock(
@@ -114,7 +108,6 @@ class RankingCard extends StatelessWidget {
               const SizedBox(height: 6),
             ],
 
-            // Fila de Metadatos (Rating y Location)
             isSkeleton
                 ? _buildSkeletonBlock(
                     width: 90,
@@ -197,7 +190,6 @@ class RankingCard extends StatelessWidget {
               const SizedBox(height: 10),
             ],
 
-            // Descripción
             isSkeleton
                 ? _buildSkeletonBlock(
                     height: 12.5,
@@ -217,7 +209,6 @@ class RankingCard extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // Botón de "View details"
             Align(
               alignment: Alignment.centerRight,
               child: isSkeleton
@@ -262,7 +253,6 @@ class RankingCard extends StatelessWidget {
     );
   }
 
-  // 🚀 Se añadió la propiedad `isCircle` para redondear el esqueleto en la cabecera
   Widget _buildSkeletonBlock({
     double? width,
     required double height,

@@ -10,17 +10,13 @@ class ErrorView extends StatelessWidget {
     required this.onActionPressed,
   });
 
-  // 🎯 MENSAJES CONTROLADOS Y PROPIOS (UX WRITING)
   String get _getCustomMessage {
-    // 🚀 CAMBIO CLAVE: Usamos .contains() para ignorar "Exception:" o cualquier envoltorio de Dart
     if (rawMessage.contains('NOT_RANKABLE_ERROR')) {
       return 'The topic requested cannot be processed into a structured ranking. Please try a different or more specific subject.';
     }
 
-    // Convertimos a minúsculas solo para las comparaciones secundarias e imprevistas
     final message = rawMessage.toLowerCase();
 
-    // 1. Error de Red / Conectividad
     if (message.contains('socketexception') ||
         message.contains('network') ||
         message.contains('timeout') ||
@@ -28,14 +24,12 @@ class ErrorView extends StatelessWidget {
       return 'We are having trouble connecting to our servers. Please check your internet connection and try again.';
     }
 
-    // 2. Error de cuota o límite de la API (Rate limit)
     if (message.contains('quota') ||
         message.contains('rate limit') ||
         message.contains('429')) {
       return 'Our AI is receiving too many requests right now. Please wait a moment before trying again.';
     }
 
-    // 3. Mensaje genérico por defecto (Friendly Fallback)
     return 'An unexpected error occurred while analyzing the topic. Please try again.';
   }
 
@@ -52,7 +46,6 @@ class ErrorView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Icono de error estilizado
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -69,7 +62,6 @@ class ErrorView extends StatelessWidget {
               ),
               const SizedBox(height: 28),
 
-              // Título del estado de error
               Text(
                 'Unable to Rank',
                 textAlign: TextAlign.center,
@@ -81,9 +73,8 @@ class ErrorView extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // Subtítulo con tu propio mensaje controlado
               Text(
-                _getCustomMessage, // 🚀 Aquí se inyecta tu lógica limpia
+                _getCustomMessage,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
@@ -93,7 +84,6 @@ class ErrorView extends StatelessWidget {
               ),
               const SizedBox(height: 32),
 
-              // Botón de acción para mitigar el error
               FilledButton.icon(
                 onPressed: onActionPressed,
                 style: FilledButton.styleFrom(
