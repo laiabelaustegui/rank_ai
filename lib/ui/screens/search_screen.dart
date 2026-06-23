@@ -115,56 +115,59 @@ class _SearchScreenState extends State<SearchScreen> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 12),
-                      SuggestionCard(
-                        icon: Icons.restaurant_outlined,
-                        title: 'BCN Restaurants',
-                        subtitle: 'Best hidden culinary gems',
-                        onTap: () => _openSearchModal(
-                          initialQuery:
-                              'Best hidden gem restaurants in Barcelona',
+                  child: IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 12),
+                        SuggestionCard(
+                          icon: Icons.restaurant_outlined,
+                          title: 'BCN Restaurants',
+                          subtitle: 'Best hidden culinary gems',
+                          onTap: () => _openSearchModal(
+                            initialQuery:
+                                'Best hidden gem restaurants in Barcelona',
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      SuggestionCard(
-                        icon: Icons.menu_book_outlined,
-                        title: 'Business Books',
-                        subtitle: 'Essential reads for founders',
-                        onTap: () => _openSearchModal(
-                          initialQuery: 'Essential business books for founders',
+                        const SizedBox(width: 12),
+                        SuggestionCard(
+                          icon: Icons.menu_book_outlined,
+                          title: 'Business Books',
+                          subtitle: 'Essential reads for founders',
+                          onTap: () => _openSearchModal(
+                            initialQuery:
+                                'Essential business books for founders',
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      SuggestionCard(
-                        icon: Icons.casino_outlined,
-                        title: 'Board Games',
-                        subtitle: 'Best strategy games for groups',
-                        onTap: () => _openSearchModal(
-                          initialQuery:
-                              'Best modern strategy board games for groups',
+                        const SizedBox(width: 12),
+                        SuggestionCard(
+                          icon: Icons.casino_outlined,
+                          title: 'Board Games',
+                          subtitle: 'Best strategy games for groups',
+                          onTap: () => _openSearchModal(
+                            initialQuery:
+                                'Best modern strategy board games for groups',
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      SuggestionCard(
-                        icon: Icons.movie_filter_outlined,
-                        title: 'Sci-Fi Movies',
-                        subtitle: 'Mind-bending masterpieces',
-                        onTap: () => _openSearchModal(
-                          initialQuery: 'Mind-bending sci-fi movies',
+                        const SizedBox(width: 12),
+                        SuggestionCard(
+                          icon: Icons.movie_filter_outlined,
+                          title: 'Sci-Fi Movies',
+                          subtitle: 'Mind-bending masterpieces',
+                          onTap: () => _openSearchModal(
+                            initialQuery: 'Mind-bending sci-fi movies',
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      SuggestionCard(
-                        icon: Icons.local_cafe_outlined,
-                        title: 'Coffee Shops',
-                        subtitle: 'Best spots to work remotely',
-                        onTap: () => _openSearchModal(
-                          initialQuery: 'Best coffee shops to work remotely',
+                        const SizedBox(width: 12),
+                        SuggestionCard(
+                          icon: Icons.local_cafe_outlined,
+                          title: 'Coffee Shops',
+                          subtitle: 'Best spots to work remotely',
+                          onTap: () => _openSearchModal(
+                            initialQuery: 'Best coffee shops to work remotely',
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
 

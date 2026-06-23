@@ -55,10 +55,8 @@ class _RankingSearchCardState extends State<RankingSearchCard> {
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: theme.colorScheme.secondary.withValues(
-              alpha: 0.40,
-            ), 
-            blurRadius: 28, 
+            color: theme.colorScheme.secondary.withValues(alpha: 0.40),
+            blurRadius: 28,
             spreadRadius: 1,
             offset: const Offset(0, 4),
           ),
@@ -82,6 +80,7 @@ class _RankingSearchCardState extends State<RankingSearchCard> {
                     horizontal: 8.0,
                   ),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.auto_awesome,
@@ -91,6 +90,15 @@ class _RankingSearchCardState extends State<RankingSearchCard> {
                       Expanded(
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 400),
+                          layoutBuilder: (currentChild, previousChildren) {
+                            return Stack(
+                              alignment: Alignment.centerLeft,
+                              children: <Widget>[
+                                ...previousChildren,
+                                if (currentChild != null) currentChild,
+                              ],
+                            );
+                          },
                           transitionBuilder:
                               (Widget child, Animation<double> animation) {
                                 return FadeTransition(
@@ -114,8 +122,6 @@ class _RankingSearchCardState extends State<RankingSearchCard> {
                                   .withValues(alpha: 0.6),
                               fontSize: 16,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),

@@ -114,42 +114,45 @@ class RankingCard extends StatelessWidget {
                     height: 13,
                     color: skeletonColor,
                   )
-                : Row(
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 15),
-                      const SizedBox(width: 4),
-                      Text(
-                        item.rating.toStringAsFixed(1),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                      if (hasLocation) ...[
-                        const SizedBox(width: 6),
-                        Text(
-                          '•',
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 14,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 2),
-                        Expanded(
-                          child: Text(
-                            item.location!,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 15),
+                          const SizedBox(width: 4),
+                          Text(
+                            item.rating.toStringAsFixed(1),
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      if (hasLocation) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 14,
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                item.location!,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontSize: 12,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ],
