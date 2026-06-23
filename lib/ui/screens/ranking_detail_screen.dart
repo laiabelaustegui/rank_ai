@@ -142,7 +142,7 @@ class RankingDetailScreen extends StatelessWidget {
                         item.subtitle.toUpperCase(),
                         style: TextStyle(
                           color: theme.colorScheme.primary,
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,
                         ),
@@ -176,90 +176,75 @@ class RankingDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // 3. Tags / Etiquetas dinámicas
-              if (item.tags.isNotEmpty) ...[
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: item.tags.map((tag) {
+              // 3. Tags / Etiquetas dinámicas (¡Actualizado!)
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  // 🟣 Tag de RANKED (Siempre el primero y en color lila)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.deepPurple.withValues(alpha: 0.25),
+                      ),
+                    ),
+                    child: Text(
+                      'Ranked #${item.position}',
+                      style: const TextStyle(
+                        color: Colors.deepPurple,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  // 🏷️ Resto de los tags dinámicos de la lista
+                  ...item.tags.map((tag) {
                     return Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest
-                            .withOpacity(0.5),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: theme.colorScheme.outlineVariant.withOpacity(
-                            0.4,
+                          color: theme.colorScheme.outlineVariant.withValues(
+                            alpha: 0.08,
                           ),
                         ),
                       ),
                       child: Text(
                         tag,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          fontSize: 12,
+                          color: theme.colorScheme.primary,
+                          fontSize: 13,
                         ),
                       ),
                     );
-                  }).toList(),
-                ),
-                const SizedBox(height: 16),
-              ],
+                  }),
+                ],
+              ),
+              const SizedBox(height: 16),
 
               // 4. Descripción
               Text(
                 item.description,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
                   height: 1.4,
                   fontSize: 15,
                 ),
               ),
-              const SizedBox(height: 20),
-
-              // 5. Bloques de Destacados (Número de Posición)
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'RANKED ',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '#${item.position}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              const SizedBox(height: 16),
 
               // Fila exclusiva para la ubicación envuelta en condicional estricto
               if (hasLocation) ...[
-                const SizedBox(height: 16),
                 InkWell(
                   onTap: hasCoordinates ? () => _openMap(context) : null,
                   borderRadius: BorderRadius.circular(12),
@@ -269,6 +254,12 @@ class RankingDetailScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: theme.colorScheme.outlineVariant.withValues(
+                          alpha: 0.8,
+                        ),
+                        width: 1.0,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,7 +270,7 @@ class RankingDetailScreen extends StatelessWidget {
                               'LOCATION',
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.8,
                               ),
@@ -288,7 +279,7 @@ class RankingDetailScreen extends StatelessWidget {
                               const SizedBox(width: 4),
                               Icon(
                                 Icons.near_me_outlined,
-                                size: 12,
+                                size: 13,
                                 color: theme.colorScheme.primary,
                               ),
                             ],
@@ -304,7 +295,7 @@ class RankingDetailScreen extends StatelessWidget {
                                 ? TextDecoration.underline
                                 : TextDecoration.none,
                             decorationColor: theme.colorScheme.primary
-                                .withOpacity(0.4),
+                                .withValues(alpha: 0.4),
                           ),
                         ),
                       ],
@@ -312,15 +303,15 @@ class RankingDetailScreen extends StatelessWidget {
                   ),
                 ),
               ],
-              const SizedBox(height: 24),
 
               // SECCIÓN BOTONES: Acceso directo para Web y Teléfono
               if (hasWebsite || hasPhone) ...[
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     if (hasWebsite)
                       Expanded(
-                        child: OutlinedButton.icon(
+                        child: FilledButton.icon(
                           onPressed: () =>
                               _openWebsite(context, item.websiteUrl!),
                           icon: const Icon(Icons.language, size: 18),
@@ -329,10 +320,20 @@ class RankingDetailScreen extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          style: OutlinedButton.styleFrom(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1,
+                              ),
                             ),
                           ),
                         ),
@@ -340,7 +341,7 @@ class RankingDetailScreen extends StatelessWidget {
                     if (hasWebsite && hasPhone) const SizedBox(width: 12),
                     if (hasPhone)
                       Expanded(
-                        child: OutlinedButton.icon(
+                        child: FilledButton.icon(
                           onPressed: () =>
                               _makeCall(context, item.phoneNumber!),
                           icon: const Icon(Icons.phone, size: 18),
@@ -349,10 +350,20 @@ class RankingDetailScreen extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          style: OutlinedButton.styleFrom(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1,
+                              ),
                             ),
                           ),
                         ),
@@ -361,7 +372,6 @@ class RankingDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
               ],
-
               // 6. Sección de Especificaciones Dinámicas (KeyStats)
               if (item.keyStats.isNotEmpty) ...[
                 Text(
@@ -374,6 +384,15 @@ class RankingDetailScreen extends StatelessWidget {
                 Card(
                   elevation: 0,
                   color: theme.colorScheme.surfaceContainerLow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: theme.colorScheme.outlineVariant.withValues(
+                        alpha: 0.8,
+                      ),
+                      width: 1.0,
+                    ),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
@@ -384,9 +403,7 @@ class RankingDetailScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                _formatStatKey(
-                                  entry.key,
-                                ), // 🚀 APLICADA LA FUNCIÓN MÁGICA AQUÍ
+                                _formatStatKey(entry.key),
                                 style: TextStyle(
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
@@ -413,24 +430,24 @@ class RankingDetailScreen extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary,
+                    color: theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
                         children: [
                           Icon(
                             Icons.auto_awesome,
-                            color: Colors.white,
+                            color: theme.colorScheme.onSecondary,
                             size: 20,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
                             'Ranking Analysis',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: theme.colorScheme.onSecondary,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -447,7 +464,7 @@ class RankingDetailScreen extends StatelessWidget {
                             criterion.reason,
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),

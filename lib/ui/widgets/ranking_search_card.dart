@@ -57,17 +57,17 @@ class _RankingSearchCardState extends State<RankingSearchCard> {
           ),
           // 🛠️ NUEVO: El sombreado difuminado (Glow) del color primario
           BoxShadow(
-            color: theme.colorScheme.primary.withValues(
-              alpha: 0.22,
+            color: theme.colorScheme.secondary.withValues(
+              alpha: 0.40,
             ), // Color primario muy sutil
-            blurRadius: 20, // Difuminado amplio para el efecto aura
+            blurRadius: 28, // Difuminado amplio para el efecto aura
             spreadRadius: 1, // Expansión mínima para que nazca desde el borde
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
           // Unimos el borde usando el mismo color primario con baja opacidad
-          color: theme.colorScheme.primary.withValues(alpha: 0.15),
+          color: theme.colorScheme.secondary.withValues(alpha: 0.15),
           width: 1.0,
         ),
       ),
@@ -88,7 +88,7 @@ class _RankingSearchCardState extends State<RankingSearchCard> {
                     children: [
                       Icon(
                         Icons.auto_awesome,
-                        color: theme.colorScheme.primary,
+                        color: theme.colorScheme.secondary,
                       ),
                       const SizedBox(width: 16),
                       Expanded(

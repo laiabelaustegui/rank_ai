@@ -57,7 +57,7 @@ class ErrorView extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.errorContainer.withValues(
-                    alpha: 0.4,
+                    alpha: 0.2,
                   ),
                   shape: BoxShape.circle,
                 ),
@@ -97,8 +97,8 @@ class ErrorView extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onActionPressed,
                 style: FilledButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: theme.colorScheme.onSecondary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24.0,
                     vertical: 12.0,

@@ -106,7 +106,7 @@ class RankingCard extends StatelessWidget {
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w500,
-                        fontSize: 13,
+                        fontSize: 14,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -187,7 +187,7 @@ class RankingCard extends StatelessWidget {
                           child: Text(
                             tag,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 10,
+                              fontSize: 12,
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
@@ -240,7 +240,7 @@ class RankingCard extends StatelessWidget {
                             Text(
                               'View details',
                               style: TextStyle(
-                                color: theme.colorScheme.primary,
+                                color: theme.colorScheme.secondary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                               ),
@@ -249,7 +249,7 @@ class RankingCard extends StatelessWidget {
                             Icon(
                               Icons.arrow_forward,
                               size: 14,
-                              color: theme.colorScheme.primary,
+                              color: theme.colorScheme.secondary,
                             ),
                           ],
                         ),

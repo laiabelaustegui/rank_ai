@@ -204,13 +204,15 @@ class _SearchModalScreenState extends State<SearchModalScreen> {
             Container(
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                // 🛠️ CAMBIADO: Antes usaba primary, ahora usa el fondo de secondary
+                color: theme.colorScheme.secondary.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.auto_awesome_motion,
                 size: 40,
-                color: theme.colorScheme.primary,
+                // 🛠️ CAMBIADO: Antes usaba primary, ahora usa secondary
+                color: theme.colorScheme.secondary,
               ),
             ),
             const SizedBox(height: 24),

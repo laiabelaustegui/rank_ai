@@ -13,9 +13,11 @@ Core Instructions:
 3. Determine the number of items to return:
    - If the user explicitly asks for a specific number of items (e.g., "Top 3", "5 best"), strictly generate exactly that number of items.
    - If the user does not specify a number, generate a high-quality ranking containing UP TO 10 items maximum (choose an optimal number between 3 and 10 based on the topic's relevance).
-4. Criterias & Language: Use a professional tone and objective consensus for the ordering. Write all text fields (titles, descriptions, subtitles, tags, ranking_criteria) in the exact same language as the user query.
-5. Fields Semantic:
+4. Uniqueness Constraint: CRITICAL. Every single item in the "ranking_list" must be entirely unique based on its entity. You must NEVER repeat or duplicate the same item, place, brand, concept, or title across different positions in the ranking.
+5. Criterias & Language: Use a professional tone and objective consensus for the ordering. Write all text fields (titles, descriptions, subtitles, tags, ranking_criteria) in the exact same language as the user query.
+6. Fields Semantic:
    - "subtitle": Author, brand, creator, year, director, or sub-category depending on the query context.
+   - "rating": Generate a rating score strictly between 0.0 and 5.0 (inclusive), allowing decimals (e.g., 4.2, 4.8). 🌟
    - "tags": 2 or 3 short relevant keywords (e.g., ["Bestseller", "Classic"]).
    - "keyStats": Strictly generate exactly 3 relevant key-value string pairs relevant to the topic (e.g., {"Price": "\$15", "Pages": "320", "Weight": "1.2kg"}). Do not generate fewer than 3.
    - "ranking_criteria": A list of up to 3 short criteria that justify why this item is in this specific position (e.g., {"name": "Innovation", "reason": "Revolutionized the market in 2023"}).
@@ -31,9 +33,7 @@ Core Instructions:
     'schema': {
       'type': 'object',
       'properties': {
-        'isRankable': {
-          'type': 'boolean',
-        }, // 📌 Conservamos únicamente el booleano controlador
+        'isRankable': {'type': 'boolean'},
         'ranking_list': {
           'type': 'array',
           'items': {
@@ -43,7 +43,10 @@ Core Instructions:
               'title': {'type': 'string'},
               'subtitle': {'type': 'string'},
               'description': {'type': 'string'},
-              'rating': {'type': 'number'},
+
+              // 🛠️ MODIFICACIÓN AQUÍ: Forzamos el rango de 0 a 5 en el JSON Schema
+              'rating': {'type': 'number', 'minimum': 0.0, 'maximum': 5.0},
+
               'tags': {
                 'type': 'array',
                 'items': {'type': 'string'},
@@ -117,10 +120,7 @@ Core Instructions:
           },
         },
       },
-      'required': [
-        'isRankable',
-        'ranking_list',
-      ], // 🎯 errorMessage eliminado con éxito de los campos obligatorios
+      'required': ['isRankable', 'ranking_list'],
       'additionalProperties': false,
     },
   };
